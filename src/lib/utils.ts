@@ -1,3 +1,6 @@
+import jwt from 'jsonwebtoken'
+import cookie, { SerializeOptions } from 'cookie'
+
 export const generatePagination = (currentPage: number, totalPages: number) => {
   if (totalPages <= 7) {
     return Array.from({length: totalPages}, (_, i) => i + 1)
@@ -19,3 +22,36 @@ export function sleep(ms: number) {
     setTimeout(resolve, ms)
   })
 }
+
+
+// Функция для генерации токена
+export function generateToken(payload: object, expiresIn: string = '1h'): string {
+    // Генерация токена
+    const token = jwt.sign(payload, process.env.AUTH_SECRET, { expiresIn });
+    return token;
+}
+
+
+export function getCookies(req: Request) {
+  const cookieHeader = req.headers.get('Cookie')
+  if (!cookieHeader) return {}
+  return cookie.parse(cookieHeader)
+}
+
+export function getCookie(req: Request, name: string) {
+  const cookieHeader = req.headers.get('Cookie')
+  if (!cookieHeader) return
+  const cookies = cookie.parse(cookieHeader)
+  return cookies[name]
+}
+
+export function setCookie(
+  resHeaders: Headers,
+  name: string,
+  value: string,
+  options?: SerializeOptions
+) {
+  resHeaders.append('Set-Cookie', cookie.serialize(name, value, options))
+}
+
+

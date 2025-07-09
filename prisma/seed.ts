@@ -17,6 +17,7 @@ const sections = [
 const users = [
     {
         email: "saveljev@yandex.ru",
+        password: "1234",
         phone: "+8-800-555-35-35",
         surname: "Савельев",
         name: "Михаил",
@@ -26,6 +27,7 @@ const users = [
     },
     {
         email: "chernisheva@yandex.ru",
+        password: "1234",
         phone: "+8-111-111-11-11",
         surname: "Чернышева",
         name: "Виктория",
@@ -35,6 +37,7 @@ const users = [
     },
     {
         email: "koroleva@yandex.ru",
+        password: "1234",
         phone: "+8-111-111-11-12",
         surname: "Королева",
         name: "Ольга",
@@ -44,6 +47,7 @@ const users = [
     },
     {
         email: "nazarov@yandex.ru",
+        password: "1234",
         phone: "+8-111-111-11-13",
         surname: "Назаров",
         name: "Константин",
@@ -53,6 +57,7 @@ const users = [
     },
     {
         email: "ananjev@yandex.ru",
+        password: "1234",
         phone: "+8-111-111-11-14",
         surname: "Ананьев",
         name: "Роман",
@@ -62,6 +67,7 @@ const users = [
     },
     {
         email: "nesterov@yandex.ru",
+        password: "1234",
         phone: "+8-111-111-11-15",
         surname: "Нестеров",
         name: "Михаил",
@@ -71,6 +77,7 @@ const users = [
     },
     {
         email: "michailov@yandex.ru",
+        password: "1234",
         phone: "+8-111-111-11-16",
         surname: "Михайлов",
         name: "Никита",
@@ -80,6 +87,7 @@ const users = [
     },
     {
         email: "denisova@yandex.ru",
+        password: "1234",
         phone: "+8-111-111-11-17",
         surname: "Денисова",
         name: "Ольга",
@@ -89,6 +97,7 @@ const users = [
     },
     {
         email: "visotskaja@yandex.ru",
+        password: "1234",
         phone: "+8-111-111-11-18",
         surname: "Высоцкая",
         name: "Олеся",
@@ -98,6 +107,7 @@ const users = [
     },
     {
         email: "solovjeva@yandex.ru",
+        password: null,
         phone: "+8-111-111-11-19",
         surname: "Соловьева",
         name: "Мелания",
@@ -217,6 +227,7 @@ async function main() {
             await prisma.user.create({
                 data: {
                     email: user.email,
+                    password: user.password,
                     phone: user.phone,
                     surname: user.surname,
                     name: user.name,

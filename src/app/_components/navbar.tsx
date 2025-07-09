@@ -5,11 +5,14 @@ import React from "react"
 import { usePathname } from 'next/navigation'
 
 export function Navbar (
-    {role} : {role: string}
+    // {role} : {role: string}
 ) {
-    const navbarButton = "btn bg-green-400 border-1 rounded-none border-green-600 hover:text-gray-50 hover:bg-green-600"
+
+    const mainColor = "blue"
+
+    const navbarButton = "btn bg-" + mainColor + "-400 border-1 rounded-none border-" + mainColor + "-600 hover:text-gray-50 hover:bg-" + mainColor + "-600"
     const emptyPage = "btn bg-gray-500 border-1 text-gray-300 rounded-none border-gray-600"
-    const currentPageButton = "btn bg-gray-100 border-2 rounded-none border-green-700 border-b-0 hover:text-gray-50 hover:bg-green-600"
+    const currentPageButton = "btn bg-gray-100 border-2 rounded-none border-" + mainColor + "-600 border-b-0 hover:text-gray-50 hover:bg-" + mainColor + "-600"
 
     const [currentPage, setCurrentPage] = React.useState(usePathname())
 
@@ -18,6 +21,26 @@ export function Navbar (
             <Link href = "/" onClick={()=> setCurrentPage("/")}
                 className = {currentPage == "/" ? currentPageButton : navbarButton}>
                 Главная
+            </Link>
+
+            <Link href = "/myprofile" onClick={()=> setCurrentPage("/myprofile")}
+                className = {currentPage == "/myprofile" ? currentPageButton : navbarButton}>
+                Мой профиль
+            </Link>
+
+            <Link href = "/user" onClick={()=> setCurrentPage("/user")}
+                className = {currentPage == "/user" ? currentPageButton : navbarButton}>
+                Сотрудники
+            </Link>
+
+            <Link href = "/section" onClick={()=> setCurrentPage("/section")}
+                className = {currentPage == "/section" ? currentPageButton : navbarButton}>
+                Отделы
+            </Link>
+
+            <Link href = "/client" onClick={()=> setCurrentPage("/client")}
+                className = {currentPage == "/client" ? currentPageButton : navbarButton}>
+                Клиенты
             </Link>
         </div>
     )

@@ -2,5 +2,5 @@ export const navbarButton = "btn bg-green-400 border-1 rounded-none border-green
 export const divForm = "flex max-w-xs flex-col space-y-2 mx-5 py-4 px-5 border-2 border-green-800 bg-white"
 export const tdStyle = "px-2 border border-black border-solid"
 export const pageHeaderStyle = "m-4 text-lg font-bold"
-export const updateButtonStyle = "btn bg-green-500 border-2 border-green-700 mt-3 hover:text-gray-50 hover:bg-green-700"
+export const updateButtonStyle = "btn bg-blue-400 border-2 border-sky-700 mt-3 hover:text-gray-50 hover:bg-sky-700"
 export const deleteButtonStyle = "btn bg-red-500 border-2 border-red-800 hover:text-gray-50 hover:bg-red-700"

@@ -12,15 +12,56 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+// Necessary for Next auth
+// model Account {
+//     id                       String  @id @default(cuid())
+//     userId                   String
+//     type                     String
+//     provider                 String
+//     providerAccountId        String
+//     refresh_token            String? // @db.Text
+//     access_token             String? // @db.Text
+//     expires_at               Int?
+//     token_type               String?
+//     scope                    String?
+//     id_token                 String? // @db.Text
+//     session_state            String?
+//     user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+//     refresh_token_expires_in Int?
+
+//     @@unique([provider, providerAccountId])
+// }
+
 
 // Сессия
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
-    // expires      DateTime
-
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId       String
+    // expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+// Пользователь
+model User {
+    id            String    @id @default(cuid())
+    email         String    @unique
+    password      String?
+    emailVerified DateTime?
+    phone         String    @unique
+    surname       String
+    name          String
+    fathername    String
+    image         String?
+
+    role Role @default(SOTR)
+    
+    // accounts      Account[]
+    sessions      Session[]
+
+    section Section @relation(fields: [sectionId], references: [id])
+    sectionId String
 }
 
 
@@ -32,22 +73,6 @@ model Section {
     users User[]
 }
 
-// Пользователь
-model User {
-    id            String    @id @default(cuid())
-    email         String    @unique
-    phone         String    @unique
-    surname       String
-    name          String
-    fathername    String
-
-    role Role @default(SOTR)
-
-    sessions      Session[]
-
-    section Section @relation(fields: [sectionId], references: [id])
-    sectionId String
-}
 
 // Роли
 enum Role {

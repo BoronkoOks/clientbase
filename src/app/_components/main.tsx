@@ -8,7 +8,6 @@ export async function MyApp ({
     return (
         <HydrateClient>
             <header>
-                {/* <Navbar role = {role}/> */}
                 <Navbar />
             </header>
             <main className="bg-gray-100">

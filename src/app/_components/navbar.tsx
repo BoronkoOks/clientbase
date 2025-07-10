@@ -3,10 +3,11 @@
 import Link from "next/link"
 import React from "react"
 import { usePathname } from 'next/navigation'
+import { api } from "~/trpc/react"
+import Cookies from 'js-cookie'
 
-export function Navbar (
-    // {role} : {role: string}
-) {
+
+export function Navbar () {
 
     const mainColor = "blue"
 
@@ -16,6 +17,14 @@ export function Navbar (
 
     const [currentPage, setCurrentPage] = React.useState(usePathname())
 
+    const {data: role, isLoading} = api.user.getRole.useQuery({token: Cookies.get("session-token") ?? ""})
+
+
+    if (isLoading) {
+        return <>Загрузка...</>
+    }
+
+
     return (
         <div className = "navbar bg-gray-100">
             <Link href = "/" onClick={()=> setCurrentPage("/")}
@@ -23,25 +32,37 @@ export function Navbar (
                 Главная
             </Link>
 
-            <Link href = "/myprofile" onClick={()=> setCurrentPage("/myprofile")}
-                className = {currentPage == "/myprofile" ? currentPageButton : navbarButton}>
-                Мой профиль
-            </Link>
+            {
+                role != "GUEST" &&
+                <Link href = "/myprofile" onClick={()=> setCurrentPage("/myprofile")}
+                    className = {currentPage == "/myprofile" ? currentPageButton : navbarButton}>
+                        Мой профиль
+                </Link>
+            }
+            
+            {
+                role == "ADMIN" &&
+                <Link href = "/user" onClick={()=> setCurrentPage("/user")}
+                    className = {currentPage == "/user" ? currentPageButton : navbarButton}>
+                        Сотрудники
+                </Link>
+            }   
 
-            <Link href = "/user" onClick={()=> setCurrentPage("/user")}
-                className = {currentPage == "/user" ? currentPageButton : navbarButton}>
-                Сотрудники
-            </Link>
+            {
+                role != "GUEST" &&
+                <Link href = "/section" onClick={()=> setCurrentPage("/section")}
+                    className = {currentPage == "/section" ? currentPageButton : navbarButton}>
+                        Отделы
+                </Link>
+            }
 
-            <Link href = "/section" onClick={()=> setCurrentPage("/section")}
-                className = {currentPage == "/section" ? currentPageButton : navbarButton}>
-                Отделы
-            </Link>
-
-            <Link href = "/client" onClick={()=> setCurrentPage("/client")}
-                className = {currentPage == "/client" ? currentPageButton : navbarButton}>
-                Клиенты
-            </Link>
+            {
+                role != "GUEST" &&
+                <Link href = "/client" onClick={()=> setCurrentPage("/client")}
+                    className = {currentPage == "/client" ? currentPageButton : navbarButton}>
+                        Клиенты
+                </Link>
+            }
         </div>
     )
 }

@@ -41,10 +41,18 @@ export const sessionRouter = createTRPCRouter({
     
     checkActiveSession: publicProcedure // проверка наличия сессии
         .input(
-            z.object({})
+            z.object({
+                token: z.string()
+            })
         )
-        .query(async ({ ctx }) => {
-            if (!ctx.session || !ctx.session.user)
+        .query(async ({ ctx, input }) => {
+            const session = await ctx.db.session.findFirst({
+                where: {
+                    sessionToken: input.token
+                }
+            })
+
+            if (!session)
             {
                 return false
             }

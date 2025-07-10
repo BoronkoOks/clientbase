@@ -13,25 +13,19 @@ export default function HomePage () {
 
     let token = Cookies.get("session-token")
 
-    let userdata = null
+    const { data: userdata, isLoading } = api.user.getMyProfile.useQuery({token: token ?? ""})
 
-    if (token) {
-        userdata = api.user.getMyProfile.useQuery({token: token ?? ""})
+    
+    if (isLoading) {
+        return <div>Загрузка...</div>
     }
-
-    useEffect(() => {
-        if (Cookies.get("session-token")) {
-            token = Cookies.get("session-token")
-        }
-    }, [router]);
-
 
     return (
         <div className = "pl-4 pt-4">
             {!token ? <SigninLink />
             :
             <>
-                <p>Здравствуйте, {userdata?.data?.name ?? ""}!</p>
+                <p>Здравствуйте, {userdata?.name ?? ""}!</p>
                 <SignoutButton />
             </>
             }

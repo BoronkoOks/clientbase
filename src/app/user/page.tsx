@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { api } from "~/trpc/react"
+import Cookies from 'js-cookie'
 
 export default function Page () {
     const router = useRouter();
-    const { data: sessionData, isLoading } = api.session.checkActiveSession.useQuery({});
+    const { data: sessionData, isLoading } = api.session.checkActiveSession.useQuery({token: Cookies.get("session-token") ?? ""})
 
     useEffect(() => {
         if (!isLoading && sessionData === false) {
@@ -15,12 +16,11 @@ export default function Page () {
     }, [isLoading, sessionData, router]);
 
     if (isLoading) {
-        return <div>Загрузка...</div>; // Можно добавить индикатор загрузки
+        return <div>Загрузка...</div>
     }
 
     return (
         <div>
-            {/* Ваш контент для авторизованных пользователей */}
             <h1>Добро пожаловать!</h1>
         </div>
     );

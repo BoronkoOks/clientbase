@@ -12,11 +12,11 @@ export default function SigninForm () {
     const [password, setPassword] = useState("")
 
     const router = useRouter()
-    const { data: sessionData, isLoading } = api.session.checkActiveSession.useQuery({});
+    const { data: sessionData, isLoading } = api.session.checkActiveSession.useQuery({
+        token: Cookies.get("session-token") ?? ""})
 
     useEffect(() => {
-        if (Cookies.get("session-token")) {
-            console.log(Cookies.get("session-token"))
+        if (sessionData && email.length == 0) {
             router.push('/')
         }
     }, [isLoading, sessionData, router]);
@@ -39,8 +39,8 @@ export default function SigninForm () {
                     setResult(data?.toString() ?? null)
 
                     Cookies.set('session-token', data?.toString() ?? "", { 
-                    expires: 1, // Кука будет действительна 1 день
-                    path: '/' // Доступность куки для всего приложения
+                    expires: 1, // Печенька будет действительна 1 день
+                    path: '/' // Доступность для всего приложения
                 });
                 
                     router.push('/');
@@ -51,8 +51,6 @@ export default function SigninForm () {
             }
         )
     }
-
-    const isSession = api.session.checkActiveSession.useQuery({}).data
 
   const divField = "flex align-middle"
 
@@ -88,8 +86,6 @@ export default function SigninForm () {
                     Войти
                 </button>
             </div>
-            {JSON.stringify(result)}<br/>
-            {JSON.stringify(isSession)}
         </div>
     )
 }

@@ -77,10 +77,12 @@ export const userRouter = createTRPCRouter({
         }),
 
 
-    getUserList: protectedProcedure // получить список пользователей
+    getUserList: publicProcedure // получить список пользователей
         .input(
             z.object({
-                query: z.string()
+                query: z.string(),
+                page: z.number(),
+                size: z.number()
             })
         )
         .query(async ({ ctx, input }) => {
@@ -106,9 +108,83 @@ export const userRouter = createTRPCRouter({
                             }
                         }
                     ]
+                },
+                orderBy: [
+                    {surname: "asc"},
+                    {name: "asc"},
+                    {fathername: "asc"}
+                ],
+                skip: (input.page - 1) * input.size,
+                take: input.size,
+                include: {
+                    section: true
                 }
             })
 
-            return users ?? []
+            const count = await ctx.db.user.count({
+                where: {
+                    OR: [
+                        {
+                            surname: {
+                                startsWith: input.query,
+                                mode: "insensitive"
+                            }
+                        },
+                        {
+                            email: {
+                                startsWith: input.query,
+                                mode: "insensitive"
+                            }
+                        },
+                        {
+                            phone: {
+                                startsWith: input.query,
+                                mode: "insensitive"
+                            }
+                        }
+                    ]
+                }
+            })
+
+            const pages = Math.ceil(Number(count) / input.size)
+
+            const userData = {users: users, pages: pages}
+
+            return userData
+        }),
+
+    countUsers: publicProcedure // получить кол-во пользователей, соотвестсвующих запросу
+        .input(
+            z.object({
+                query: z.string()
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const users = await ctx.db.user.count({
+                where: {
+                    OR: [
+                        {
+                            surname: {
+                                startsWith: input.query,
+                                mode: "insensitive"
+                            }
+                        },
+                        {
+                            email: {
+                                startsWith: input.query,
+                                mode: "insensitive"
+                            }
+                        },
+                        {
+                            phone: {
+                                startsWith: input.query,
+                                mode: "insensitive"
+                            }
+                        }
+                    ]
+                }
+            })
+
+            return users ?? 0
         }),
 })

@@ -6,38 +6,43 @@ import { api } from "~/trpc/react"
 import { updateButtonStyle } from "~/styles/daisystyles"
 import PersonalData from "../_common/personalData"
 import ContactInfo from "../_common/contactInfo"
-import PasswordChange from "../_common/passwordChange"
-import {checkEditedEmailDuplicates, checkEditedPhoneDuplicates} from "~/app/api/action/user"
+import GroupDiv from "~/app/ui/groupDiv"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import {checkEmailDuplicates, checkPhoneDuplicates} from "~/app/api/action/user"
 
 
 // добавить проверку на уникальность почты и телефона
 
-export function ProfileInfo (
-    {userdata, editSection = false, pageName = "?"} : 
-    {
-        userdata: User,
-        editSection: boolean,
-        pageName?: string
-    }
-)
-{
-
-    const [user, setUser] = useState<User>(userdata)
-    const [newPassword, setNewPassword] = useState<string>("")
-    const [newPasswordRepeat, setNewPasswordRepeat] = useState<string>("")
+export function AddUser () {
+    const [user, setUser] = useState<User>({
+        id: "",
+        surname: "",
+        name: "",
+        fathername: "",
+        email: "",
+        emailVerified: null,
+        image: null,
+        phone: "",
+        sectionId: "",
+        password: "",
+        role: "SOTR"
+    })
 
     const [errMessage, setErrMessage] = useState<string>("")
 
-    const updateUserMutation = api.user.updateUser.useMutation()
+    const createUserMutation = api.user.createUser.useMutation()
     const utils = api.useUtils()
 
-    function Saving(){
-        setNewPassword("")
-        setNewPasswordRepeat("")
+    const inputClassStyle = "input input-bordered"
 
-        updateUserMutation.mutate(
+    const router = useRouter()
+
+
+    function Saving(){
+        setErrMessage("")
+
+        createUserMutation.mutate(
             {
-                id: user.id,
                 surname: user.surname,
                 name: user.name,
                 fathername: user.fathername,
@@ -45,13 +50,12 @@ export function ProfileInfo (
                 phone: user.phone,
                 role: user.role,
                 sectionId: user.sectionId,
-                password: newPassword.trim().length > 0 ? newPassword : user.password
+                password: user.password
             },
             {
                 onSuccess: () => {
-                    utils.user.getMyProfile.invalidate()
-                    utils.user.getById.invalidate()
-                    setErrMessage("")
+                    utils.user.getUserList.invalidate()
+                    router.push('/user')
                 },
                 onError(error, variables, context) {
                     setErrMessage(JSON.stringify(error))
@@ -63,33 +67,26 @@ export function ProfileInfo (
 
     async function handleSave () {
         if (user.surname.trim() != "" && user.name.trim() != "" && user.fathername.trim() != "" &&
-             user.email.trim() != "" && user.phone.length == 15
+             user.email.trim() != "" && user.phone.length == 15 &&
+             user.sectionId != "" && user.password?.trim() != ""
         )
         {
-            const emailDuplicates = await checkEditedEmailDuplicates(user.email, user.id)
+            const emailExists = await checkEmailDuplicates(user.email)
 
-            if (emailDuplicates) {
-                setErrMessage("Данный email зарегистрирован на другого пользователя")
+            if (emailExists)
+            {
+                setErrMessage("Пользователь с таким email уже существует")
             }
             else {
-                const phoneDuplicates = await checkEditedPhoneDuplicates(user.phone, user.id)
+                const phoneExists = await checkPhoneDuplicates(user.phone)
 
-                if (phoneDuplicates) {
-                    setErrMessage("Данный телефон зарегистрирован на другого пользователя")
+                if (phoneExists) {
+                    setErrMessage("Пользователь с таким телефоном уже существует")
                 }
                 else {
-                    if (newPassword.trim().length > 0) {
-                        if (newPassword != newPasswordRepeat) {
-                            setErrMessage("Пароли не совпадают")
-                        }
-                        else {
-                            Saving()
-                        }
-                    }
-                    else {
-                        Saving()
-                    }
+                    Saving()
                 }
+                
             }
         }
         else {
@@ -103,16 +100,14 @@ export function ProfileInfo (
                 <tr>
                     <td className = "pb-4" colSpan={3}>
                         <div>
-                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">
-                                {pageName}
-                            </label>
+                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">Новый сотрудник</label>
                             <button type="submit" className={updateButtonStyle + " inline-block"}
                                 onClick={() => handleSave()}>
-                                    Обновить
+                                    Добавить
                             </button>
                             {
                                 errMessage != "" &&
-                                <label className = "mt-2 ml-4 inline-block align-middle text-red-700">{errMessage}</label>
+                                <label className = "mt-3 ml-4 inline-block align-middle text-red-700">{errMessage}</label>
                             }
                         </div>
                     </td>
@@ -133,19 +128,23 @@ export function ProfileInfo (
                             email = {user.email}
                             phone = {user.phone}
                             sectionId = {user.sectionId}
-                            edit = {editSection}
+                            edit = {true}
                             emailChange = {val => setUser({...user, email: val})}
                             phoneChange = {val => setUser({...user, phone: val})}
                             sectionChange = {val => setUser({...user, sectionId: val})}
                         />
                     </td>
                     <td className = "pl-6 align-top">
-                        <PasswordChange 
-                            newPassword = {newPassword}
-                            newPasswordRepeat = {newPasswordRepeat}
-                            newPasswordChange={setNewPassword}
-                            newPasswordRepeatChange={setNewPasswordRepeat}
-                        />
+                        <GroupDiv>
+                            <p className="mb-4"><b>Пароль*</b></p>
+                            <input
+                                type="password"
+                                required
+                                className= {inputClassStyle + " mt-1 mb-2"}
+                                value = {user.password ?? ""}
+                                onChange={(e)=> setUser({...user, password: e.target.value})}
+                            />
+                        </GroupDiv>
                     </td>
                 </tr>
                 <tr>

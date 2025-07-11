@@ -52,7 +52,7 @@ export function Navbar () {
                 role != "GUEST" &&
                 <Link href = "/section" onClick={()=> setCurrentPage("/section")}
                     className = {currentPage == "/section" ? currentPageButton : navbarButton}>
-                        Отделы
+                        Подразделения
                 </Link>
             }
 

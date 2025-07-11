@@ -18,7 +18,7 @@ const users = [
     {
         email: "saveljev@yandex.ru",
         password: "1234",
-        phone: "+8-800-555-35-35",
+        phone: "8-800-555-35-35",
         surname: "Савельев",
         name: "Михаил",
         fathername: "Андреевич",
@@ -28,7 +28,7 @@ const users = [
     {
         email: "chernisheva@yandex.ru",
         password: "1234",
-        phone: "+8-111-111-11-11",
+        phone: "8-111-111-11-11",
         surname: "Чернышева",
         name: "Виктория",
         fathername: "Сергеевна",
@@ -38,7 +38,7 @@ const users = [
     {
         email: "koroleva@yandex.ru",
         password: "1234",
-        phone: "+8-111-111-11-12",
+        phone: "8-111-111-11-12",
         surname: "Королева",
         name: "Ольга",
         fathername: "Артёмовна",
@@ -48,7 +48,7 @@ const users = [
     {
         email: "nazarov@yandex.ru",
         password: "1234",
-        phone: "+8-111-111-11-13",
+        phone: "8-111-111-11-13",
         surname: "Назаров",
         name: "Константин",
         fathername: "Львович",
@@ -58,7 +58,7 @@ const users = [
     {
         email: "ananjev@yandex.ru",
         password: "1234",
-        phone: "+8-111-111-11-14",
+        phone: "8-111-111-11-14",
         surname: "Ананьев",
         name: "Роман",
         fathername: "Никитич",
@@ -68,7 +68,7 @@ const users = [
     {
         email: "nesterov@yandex.ru",
         password: "1234",
-        phone: "+8-111-111-11-15",
+        phone: "8-111-111-11-15",
         surname: "Нестеров",
         name: "Михаил",
         fathername: "Павлович",
@@ -78,7 +78,7 @@ const users = [
     {
         email: "michailov@yandex.ru",
         password: "1234",
-        phone: "+8-111-111-11-16",
+        phone: "8-111-111-11-16",
         surname: "Михайлов",
         name: "Никита",
         fathername: "Тимурович",
@@ -88,7 +88,7 @@ const users = [
     {
         email: "denisova@yandex.ru",
         password: "1234",
-        phone: "+8-111-111-11-17",
+        phone: "8-111-111-11-17",
         surname: "Денисова",
         name: "Ольга",
         fathername: "Александровна",
@@ -98,7 +98,7 @@ const users = [
     {
         email: "visotskaja@yandex.ru",
         password: "1234",
-        phone: "+8-111-111-11-18",
+        phone: "8-111-111-11-18",
         surname: "Высоцкая",
         name: "Олеся",
         fathername: "Тихоновна",
@@ -108,7 +108,7 @@ const users = [
     {
         email: "solovjeva@yandex.ru",
         password: null,
-        phone: "+8-111-111-11-19",
+        phone: "8-111-111-11-19",
         surname: "Соловьева",
         name: "Мелания",
         fathername: "Егоровна",
@@ -120,7 +120,7 @@ const users = [
 const clients = [
     {
         email: "andreevaam@yandex.ru",
-        phone: "+8-222-222-22-22",
+        phone: "8-222-222-22-22",
         surname: "Андреева",
         name: "Арина",
         fathername: "Максимовна",
@@ -128,7 +128,7 @@ const clients = [
     },
     {
         email: "zhykovamm@yandex.ru",
-        phone: "+8-222-222-22-23",
+        phone: "8-222-222-22-23",
         surname: "Жукова",
         name: "Мария",
         fathername: "Матвеевна",
@@ -136,7 +136,7 @@ const clients = [
     },
     {
         email: "spiridonovakt@yandex.ru",
-        phone: "+8-222-222-22-24",
+        phone: "8-222-222-22-24",
         surname: "Спиридонова",
         name: "Камила",
         fathername: "Тимофеевна",
@@ -144,7 +144,7 @@ const clients = [
     },
     {
         email: "davidovivan@yandex.ru",
-        phone: "+8-222-222-22-25",
+        phone: "8-222-222-22-25",
         surname: "Давыдов",
         name: "Иван",
         fathername: "Кириллович",
@@ -152,7 +152,7 @@ const clients = [
     },
     {
         email: "gromovaamina@yandex.ru",
-        phone: "+8-222-222-22-26",
+        phone: "8-222-222-22-26",
         surname: "Громова",
         name: "Амина",
         fathername: "Максимовна",
@@ -160,7 +160,7 @@ const clients = [
     },
     {
         email: "prokofjevasofi@yandex.ru",
-        phone: "+8-222-222-22-27",
+        phone: "8-222-222-22-27",
         surname: "Прокофьева",
         name: "София",
         fathername: "Максимовна",
@@ -168,7 +168,7 @@ const clients = [
     },
     {
         email: "iljincorp@yandex.ru",
-        phone: "+8-222-222-22-28",
+        phone: "8-222-222-22-28",
         surname: "Ильин",
         name: "Арсений",
         fathername: "Кириллович",
@@ -176,7 +176,7 @@ const clients = [
     },
     {
         email: "greencompany@yandex.ru",
-        phone: "+8-222-222-22-29",
+        phone: "8-222-222-22-29",
         surname: "Зеленина",
         name: "Полина",
         fathername: "Дмитриевна",
@@ -184,7 +184,7 @@ const clients = [
     },
     {
         email: "watersource@yandex.ru",
-        phone: "+8-222-222-22-30",
+        phone: "8-222-222-22-30",
         surname: "Сухарева",
         name: "Алина",
         fathername: "Елисеевна",
@@ -192,7 +192,7 @@ const clients = [
     },
     {
         email: "lolkekcheburek@yandex.ru",
-        phone: "+8-222-222-22-31",
+        phone: "8-222-222-22-31",
         surname: "Николаева",
         name: "Ольга",
         fathername: "Родионовна",

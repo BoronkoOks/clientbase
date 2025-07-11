@@ -153,38 +153,50 @@ export const userRouter = createTRPCRouter({
             return userData
         }),
 
-    countUsers: publicProcedure // получить кол-во пользователей, соотвестсвующих запросу
+    getById: publicProcedure // поиск пользователя по id
         .input(
             z.object({
-                query: z.string()
+                id: z.string()
             })
         )
         .query(async ({ ctx, input }) => {
-            const users = await ctx.db.user.count({
+            const user = await ctx.db.user.findFirst({
                 where: {
-                    OR: [
-                        {
-                            surname: {
-                                startsWith: input.query,
-                                mode: "insensitive"
-                            }
-                        },
-                        {
-                            email: {
-                                startsWith: input.query,
-                                mode: "insensitive"
-                            }
-                        },
-                        {
-                            phone: {
-                                startsWith: input.query,
-                                mode: "insensitive"
-                            }
-                        }
-                    ]
+                    id: input.id
                 }
             })
 
-            return users ?? 0
+            return user
+        }),
+
+
+    createUser: publicProcedure // добавление пользователя
+        .input(
+            z.object({
+                surname: z.string(),
+                name: z.string(),
+                fathername: z.string(),
+                email: z.string(),
+                phone: z.string(),
+                role: z.string(),
+                sectionId: z.string(),
+                password: z.string().nullable()
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const user = await ctx.db.user.create({
+                data: {
+                    surname: input.surname,
+                    name: input.name,
+                    fathername: input.fathername,
+                    email: input.email,
+                    phone: input.phone,
+                    role: input.role as Role,
+                    sectionId: input.sectionId,
+                    password: input.password
+                }
+            })
+
+            return user
         }),
 })

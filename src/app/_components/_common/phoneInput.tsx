@@ -1,6 +1,5 @@
 "use client"
 
-import { ChangeEvent } from "react"
 import { useState } from "react"
 
 
@@ -14,19 +13,17 @@ export default function PhoneInput ({phone, onChange, className = ""}:
 {
     const [phoneValue, setPhoneValue] = useState<string>(phone)
 
-    function handleChange(e: ChangeEvent<HTMLInputElement>) {
-        const newValue = e.target.value
+    function handleChange(newValue: string) {
+        let value = ""
 
-        let value = "+"
-
-        for (let i = 1; i < newValue.length; i++) {
-            if (i >= 16) {
+        for (let i = 0; i < newValue.length; i++) {
+            if (i >= 15) {
                 break
             }
 
             const valLen = value.length
 
-            if (valLen == 2 || valLen == 6 || valLen == 10 || valLen == 13) {
+            if (valLen == 1 || valLen == 5 || valLen == 9 || valLen == 12) {
                 if (newValue[i] != "-") {
                     value += "-"
                 }
@@ -50,9 +47,9 @@ export default function PhoneInput ({phone, onChange, className = ""}:
   return (
     <input
         value = {phoneValue}
-        onChange={e => handleChange(e)}
+        onChange={e => handleChange(e.target.value)}
         className = {className}
-        placeholder = "+9-999-999-99-99"
+        placeholder = "9-999-999-99-99"
     />
   )
 }

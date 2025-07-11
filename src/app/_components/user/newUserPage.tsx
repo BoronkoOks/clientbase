@@ -3,13 +3,10 @@
 import { useEffect, useState} from 'react'
 import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
-import UserTable from "~/app/_components/user/userTable"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import SearchInput from '~/app/ui/searchInput'
-import { updateButtonStyle } from '~/styles/daisystyles'
-import Link from "next/link"
+import { AddUser } from './addUser'
 
-export default function UserPage () {
+export default function NewUserPage () {
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const { replace } = useRouter()
@@ -28,7 +25,7 @@ export default function UserPage () {
 
     
     if (isLoading) {
-        return <div></div>
+        return <div>загрузка...</div>
     }
 
     if (userData != "ADMIN") {
@@ -41,17 +38,7 @@ export default function UserPage () {
             <tbody>
                 <tr>
                     <td>
-                        <label className = "mt-2 mr-4 font-bold inline-block align-middle">Сотрудники</label>
-                        <Link href = "/user/new"
-                            className = "btn bg-blue-400 border-2 border-blue-600 mt-3 hover:text-gray-50 hover:bg-blue-600">
-                                Добавить
-                        </Link>
-                    </td>
-                </tr>
-                <tr>
-                    <td className = "pt-4">
-                        <SearchInput placeholder="Поиск по фамилии, email или телефону" />
-                        <UserTable/>
+                        <AddUser/>
                     </td>
                 </tr>
             </tbody>

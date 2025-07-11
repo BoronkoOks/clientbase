@@ -20,7 +20,8 @@ export default function UserTable()
 
   const tdStyle = "px-2 border border-black border-solid"
 
-  const {data: usersData, isLoading} = api.user.getUserList.useQuery({query: query, page: page, size: 2})
+  const {data: usersData, isLoading} = api.user.getUserList.useQuery({
+    query: query, page: page, size: 10})
 
   const totalPages = usersData ? (usersData.pages > 0 ? usersData.pages : 1) : 1
 
@@ -45,10 +46,11 @@ export default function UserTable()
         <thead>
           <tr>
             <th className={tdStyle}>№</th>
-            <th className={tdStyle}>Email</th>
             <th className={tdStyle}>Сотрудник</th>
             <th className={tdStyle}>Отдел</th>
             <th className={tdStyle}>Роль</th>
+            <th className={tdStyle}>Email</th>
+            <th className={tdStyle}>Телефон</th>
             <th></th>
           </tr>
         </thead>
@@ -56,10 +58,11 @@ export default function UserTable()
           {usersData?.users.map((u, i) => (
             <tr key={u.id}>
               <td className={tdStyle + " align-items-end"}><p>{startNumber + i}</p></td>
-              <td className={tdStyle}>{u.email}</td>
               <td className={tdStyle}>{u.surname + " " + u.name.substring(0,1) + ". " + u.fathername.substring(0,1) + "."}</td>
               <td className={tdStyle}>{u.section?.name}</td>
               <td className={tdStyle}>{u.role}</td>
+              <td className={tdStyle}>{u.email}</td>
+              <td className={tdStyle}>{u.phone}</td>
               <td className={tdStyle + " border-none"}>
                 <Link href={`/user/${u.id}`}>
                     <PencilSquareIcon className="w-4" />

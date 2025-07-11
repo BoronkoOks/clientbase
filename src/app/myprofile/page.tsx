@@ -10,8 +10,6 @@ export default function Page () {
     const router = useRouter()
     const token = Cookies.get("session-token")
 
-    // const { data: sessionData, isLoading } = api.session.checkActiveSession.useQuery({token: token ?? ""})
-
     const {data: userdata, isLoading} = api.user.getMyProfile.useQuery({token: token ?? ""})
 
     useEffect(() => {
@@ -29,7 +27,13 @@ export default function Page () {
             <tbody>
                 <tr>
                     <td className = "align-top pl-4 pt-4">
-                        {userdata && <ProfileInfo userdata = {userdata} />}
+                        {userdata &&
+                            <ProfileInfo
+                                userdata = {userdata}
+                                editSection = {userdata.role == "ADMIN"}
+                                pageName = "Профиль"
+                            />
+                        }
                     </td>
                 </tr>
             </tbody>

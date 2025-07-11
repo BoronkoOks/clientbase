@@ -1,16 +1,21 @@
 import React from "react"
-import { db } from "~/server/db"
-import { getRole } from "~/app/api/auth/check"
-// import { UserInfo, UserInfoMODE } from "~/app/_components/user/userInfo"
+import NewUserPage from "~/app/_components/user/newUserPage";
+import UserInfoPage from "~/app/_components/user/userInfoPage"
 
-export default async function Page (props: { params: Promise<{ id: string }> }) {
+export default async function Page (props: { params: Promise<{ id?: string; }> }) {
+    const params = await props.params
+    const id = params.id ?? ""
 
     return (
         <table>
             <tbody>
                 <tr>
                     <td className = "align-top pl-4 pt-4">
-                        {/* <UserPage /> */}WIP
+                        {
+                        id != "new" ? <UserInfoPage id = {id}/>
+                        :
+                        <NewUserPage />
+                        }
                     </td>
                 </tr>
             </tbody>

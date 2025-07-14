@@ -7,7 +7,7 @@ import { updateButtonStyle } from "~/styles/daisystyles"
 import PersonalData from "../_common/personalData"
 import ContactInfo from "../_common/contactInfo"
 import GroupDiv from "~/app/ui/groupDiv"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import {checkEmailDuplicates, checkPhoneDuplicates} from "~/app/api/action/user"
 
 
@@ -39,7 +39,6 @@ export function AddUser () {
 
 
     function Saving(){
-        setErrMessage("")
 
         createUserMutation.mutate(
             {
@@ -55,6 +54,7 @@ export function AddUser () {
             {
                 onSuccess: () => {
                     utils.user.getUserList.invalidate()
+                    setErrMessage("")
                     router.push('/user')
                 },
                 onError(error, variables, context) {

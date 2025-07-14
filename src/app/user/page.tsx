@@ -2,7 +2,6 @@ import UserPage from "~/app/_components/user/userPage"
 
 export default async function Home(props: {searchParams: Promise<{ query?: string; page?: string }>})
 {
-
     return (
         <table>
             <tbody>

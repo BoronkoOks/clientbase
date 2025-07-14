@@ -1,10 +1,11 @@
-import { PrismaClient, Role } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client"
+import {hashPassword} from "~/server/api/pass"
 
 const prisma = new PrismaClient()
 
 const sections = [
     {
-        name: "IT-отдел"
+        name: "Техподдержка"
     },
     {
         name: "Отдел кадров"
@@ -23,7 +24,7 @@ const users = [
         name: "Михаил",
         fathername: "Андреевич",
         role: "ADMIN",
-        section: "IT-отдел"
+        section: "Техподдержка"
     },
     {
         email: "chernisheva@yandex.ru",
@@ -33,7 +34,7 @@ const users = [
         name: "Виктория",
         fathername: "Сергеевна",
         role: "SOTR",
-        section: "IT-отдел"
+        section: "Техподдержка"
     },
     {
         email: "koroleva@yandex.ru",
@@ -43,7 +44,7 @@ const users = [
         name: "Ольга",
         fathername: "Артёмовна",
         role: "SOTR",
-        section: "IT-отдел"
+        section: "Техподдержка"
     },
     {
         email: "nazarov@yandex.ru",
@@ -53,7 +54,7 @@ const users = [
         name: "Константин",
         fathername: "Львович",
         role: "SOTR",
-        section: "IT-отдел"
+        section: "Техподдержка"
     },
     {
         email: "ananjev@yandex.ru",

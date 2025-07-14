@@ -1,6 +1,5 @@
 import { HydrateClient } from "~/trpc/server"
 import SigninForm from "../_components/signin/signinForm"
-// import { redirect } from 'next/navigation'
 
 
 export default async function Home() {

@@ -1,23 +1,25 @@
 "use client"
 
 import Link from "next/link"
-import React from "react"
+import {useContext, useState} from "react"
 import { usePathname } from 'next/navigation'
 import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
+import { sessionCookieName } from "../api/context/contextVariables"
 
 
 export function Navbar () {
 
     const mainColor = "blue"
 
+    const cookieName = useContext(sessionCookieName)
+
     const navbarButton = "btn bg-" + mainColor + "-400 border-1 rounded-none border-" + mainColor + "-600 hover:text-gray-50 hover:bg-" + mainColor + "-600"
-    const emptyPage = "btn bg-gray-500 border-1 text-gray-300 rounded-none border-gray-600"
     const currentPageButton = "btn bg-gray-100 border-2 rounded-none border-" + mainColor + "-600 border-b-0 hover:text-gray-50 hover:bg-" + mainColor + "-600"
 
-    const [currentPage, setCurrentPage] = React.useState(usePathname())
+    const [currentPage, setCurrentPage] = useState(usePathname())
 
-    const {data: role, isLoading} = api.user.getRole.useQuery({token: Cookies.get("session-token") ?? ""})
+    const {data: role, isLoading} = api.user.getRole.useQuery({token: Cookies.get(cookieName) ?? ""})
 
 
     if (isLoading) {

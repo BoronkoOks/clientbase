@@ -1,22 +1,19 @@
 "use client"
 
-import { useEffect, useState} from 'react'
+import { useEffect, useContext} from 'react'
 import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
 import UserTable from "~/app/_components/user/userTable"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import SearchInput from '~/app/ui/searchInput'
-import { updateButtonStyle } from '~/styles/daisystyles'
 import Link from "next/link"
+import { sessionCookieName } from '../../api/context/contextVariables'
 
 export default function UserPage () {
-    const searchParams = useSearchParams()
-    const pathname = usePathname()
-    const { replace } = useRouter()
     const router = useRouter()
+    const cookieName = useContext(sessionCookieName)
 
-
-    const { data: userData, isLoading } = api.user.getRole.useQuery({token: Cookies.get("session-token") ?? ""})
+    const { data: userData, isLoading } = api.user.getRole.useQuery({token: Cookies.get(cookieName) ?? ""})
 
     useEffect(() => {
         if (!isLoading) {

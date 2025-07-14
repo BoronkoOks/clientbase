@@ -21,6 +21,12 @@ export const sessionRouter = createTRPCRouter({
                 if (user.password == input.password) {
                     const sessionToken = generateToken({email: user.email}, "5min")
 
+                    await ctx.db.session.deleteMany({
+                        where: {
+                            userId : user.id
+                        }
+                    })
+
                     await ctx.db.session.create({
                         data: {
                             sessionToken: sessionToken,
@@ -59,5 +65,21 @@ export const sessionRouter = createTRPCRouter({
             else {
                 return true
             }
+        }),
+
+    endSession: publicProcedure // удалить сессию из БД
+        .input(
+            z.object({
+                token: z.string()
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const session = await ctx.db.session.delete({
+                where: {
+                    sessionToken: input.token
+                }
+            })
+
+            return session
         }),
 })

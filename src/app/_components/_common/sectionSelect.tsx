@@ -6,7 +6,7 @@ import { api } from "~/trpc/react"
 export default function SectionSelect (
     {value, onChange, edit = false} : {value: string, onChange: (val: string) => void, edit: boolean})
 {
-    const {data: sections, isLoading} = api.section.getSectionList.useQuery({query: ""})
+    const {data: sectionsData, isLoading} = api.section.getSectionList.useQuery({query: ""})
 
 
     return (
@@ -30,7 +30,7 @@ export default function SectionSelect (
                                     <option key = "" value = "">[не выбрано]</option>
                                 }
                                 {
-                                    sections?.map(s => 
+                                    sectionsData?.sections.map(s => 
                                         <option key = {s.id} value={s.id}>
                                             {s.name}
                                         </option>
@@ -39,7 +39,7 @@ export default function SectionSelect (
                             </select>
                         </>
                         :
-                        <label>{sections && <>{sections.find(s => s.id == value)?.name}</>}</label>
+                        <label>{sectionsData && <>{sectionsData.sections.find(s => s.id == value)?.name}</>}</label>
                     }
                 </>
             }

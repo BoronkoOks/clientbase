@@ -4,10 +4,12 @@ import { useEffect, useContext} from 'react'
 import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { UserInfo } from './userInfo'
+import SearchInput from '~/app/ui/searchInput'
+import SectionTable from './sectionTable'
+import AddSection from './addSection'
 import { sessionCookieName } from '../../api/context/contextVariables'
 
-export default function UserInfoPage ({id} : {id: string}) {
+export default function SectionPage () {
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const { replace } = useRouter()
@@ -27,11 +29,7 @@ export default function UserInfoPage ({id} : {id: string}) {
 
     
     if (isLoading) {
-        return <div>загрузка...</div>
-    }
-
-    if (userData != "ADMIN") {
-        return <div>403 Forbidden</div>
+        return <div>Загрузка...</div>
     }
 
 
@@ -39,9 +37,19 @@ export default function UserInfoPage ({id} : {id: string}) {
         <table>
             <tbody>
                 <tr>
-                    <td>
-                        <UserInfo id = {id} />
+                    <td className = "align-top">
+                        <label className = "mt-2 mr-4 font-bold inline-block align-middle">Подразделения</label>
                     </td>
+                </tr>
+                <tr>
+                    <td className = "pt-4 align-top">
+                        <SearchInput placeholder="Поиск по названию" />
+                        <SectionTable edit = {userData == "ADMIN"} />
+                    </td>
+                    {
+                        userData == "ADMIN" &&
+                        <td className = "pt-4 pl-20 align-top"><AddSection /></td>
+                    }
                 </tr>
             </tbody>
         </table>

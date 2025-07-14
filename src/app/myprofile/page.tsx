@@ -1,14 +1,16 @@
 "use client"
 
-import { useEffect } from 'react'
+import { useEffect, useContext } from 'react'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 import { api } from "~/trpc/react"
 import { ProfileInfo } from '../_components/myprofile/profileInfo'
+import { sessionCookieName } from '../api/context/contextVariables'
 
 export default function Page () {
     const router = useRouter()
-    const token = Cookies.get("session-token")
+    const cookieName = useContext(sessionCookieName)
+    const token = Cookies.get(cookieName)
 
     const {data: userdata, isLoading} = api.user.getMyProfile.useQuery({token: token ?? ""})
 

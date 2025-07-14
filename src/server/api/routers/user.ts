@@ -199,4 +199,19 @@ export const userRouter = createTRPCRouter({
 
             return user
         }),
+
+
+    deleteUser: publicProcedure // добавление пользователя
+        .input(
+            z.object({
+                id: z.string()
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const user = await ctx.db.user.delete({
+                where: { id: input.id }
+            })
+
+            return user
+        }),
 })

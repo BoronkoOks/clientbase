@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { generateToken, setCookie } from "~/lib/utils"
+import { comparePasswords } from "../pass"
 
 export const sessionRouter = createTRPCRouter({
     tryAuth: publicProcedure // попытка войти
@@ -18,7 +19,9 @@ export const sessionRouter = createTRPCRouter({
             })
 
             if (user) {
-                if (user.password == input.password) {
+                const rightPassword = await comparePasswords(input.password, user.password)
+                
+                if (rightPassword) {
                     const sessionToken = generateToken({email: user.email}, "5min")
 
                     await ctx.db.session.deleteMany({

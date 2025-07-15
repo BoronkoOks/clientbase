@@ -225,10 +225,12 @@ async function main() {
                 select: { id: true }
             })
 
+            const hashedPassword = await hashPassword(user.password ?? "")
+
             await prisma.user.create({
                 data: {
                     email: user.email,
-                    password: user.password,
+                    password: hashedPassword,
                     phone: user.phone,
                     surname: user.surname,
                     name: user.name,

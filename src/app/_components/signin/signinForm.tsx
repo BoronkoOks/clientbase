@@ -16,12 +16,14 @@ export default function SigninForm () {
 
     const cookieName = useContext(sessionCookieName)
 
+    const tryAuthMutation = api.session.tryAuth.useMutation()
+
     const router = useRouter()
     const { data: sessionData, isLoading } = api.session.checkActiveSession.useQuery({
         token: Cookies.get(cookieName) ?? ""})
 
     useEffect(() => {
-        if (sessionData && email.length == 0) {
+        if (sessionData) {
             router.push('/')
         }
     }, [isLoading, sessionData, router]);
@@ -29,9 +31,6 @@ export default function SigninForm () {
 
     const inputClassStyle = "input border-2 boder-dashed"
 
-    const [result, setResult] = useState<string|null>("")
-
-    const tryAuthMutation = api.session.tryAuth.useMutation()
 
 
     const handleLogin = () => {
@@ -45,10 +44,8 @@ export default function SigninForm () {
                 },
                 {
                     onSuccess: (data) => {
-                        setResult(data?.toString() ?? "")
-
-                        if (result?.includes("Ошибка")) {
-                            setErrMessage(result)
+                        if (data.includes("Ошибка")) {
+                            setErrMessage(data)
                         }
                         else {
                             setErrMessage("")
@@ -62,7 +59,7 @@ export default function SigninForm () {
                         }
                     },
                     onError: (error) => {
-                        setResult(JSON.stringify(error))
+                        setErrMessage(JSON.stringify(error))
                     }
                 }
             )

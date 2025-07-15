@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { Role } from "@prisma/client"
+import { hashPassword } from "../pass"
 
 export const userRouter = createTRPCRouter({
     getMyProfile: publicProcedure // вывод информации от текущем пользователе
@@ -53,10 +54,12 @@ export const userRouter = createTRPCRouter({
                 phone: z.string(),
                 role: z.string(),
                 sectionId: z.string(),
-                password: z.string().nullable()
+                password: z.string()
             })
         )
         .mutation(async ({ ctx, input }) => {
+            const hashedPassword = await hashPassword(input.password)
+
             const user = await ctx.db.user.update({
                 where: {
                     id: input.id
@@ -69,7 +72,7 @@ export const userRouter = createTRPCRouter({
                     phone: input.phone,
                     role: input.role as Role,
                     sectionId: input.sectionId,
-                    password: input.password
+                    password: hashedPassword
                 }
             })
 
@@ -180,10 +183,12 @@ export const userRouter = createTRPCRouter({
                 phone: z.string(),
                 role: z.string(),
                 sectionId: z.string(),
-                password: z.string().nullable()
+                password: z.string()
             })
         )
         .mutation(async ({ ctx, input }) => {
+            const hashedPassword = await hashPassword(input.password)
+            
             const user = await ctx.db.user.create({
                 data: {
                     surname: input.surname,
@@ -193,7 +198,7 @@ export const userRouter = createTRPCRouter({
                     phone: input.phone,
                     role: input.role as Role,
                     sectionId: input.sectionId,
-                    password: input.password
+                    password: hashedPassword
                 }
             })
 

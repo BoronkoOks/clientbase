@@ -8,9 +8,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import Pagination from "~/app/ui/pagination"
 
 
-export default function SectionTable(
-  {edit = false} : {edit: boolean}
-)
+export default function SectionUserTable({sectionId} : {sectionId: string})
 {
   const searchParams = useSearchParams()
   const query = searchParams.get("query") || "";
@@ -22,10 +20,10 @@ export default function SectionTable(
 
   const tdStyle = "px-2 border border-black border-solid"
 
-  const {data: sectionsData, isLoading} = api.section.getSectionList.useQuery({
-    query: query, page: page, size: 10})
+  const {data: usersData, isLoading} = api.section.getUserList.useQuery({
+    sectionId: sectionId, query: query, page: page, size: 10})
 
-  const totalPages = sectionsData ? (sectionsData.pages > 0 ? sectionsData.pages : 1) : 1
+  const totalPages = usersData ? (usersData.pages > 0 ? usersData.pages : 1) : 1
 
 
   useEffect (() => {
@@ -34,7 +32,7 @@ export default function SectionTable(
       params.set("page", totalPages.toString())
       replace(`${pathname}?${params.toString()}`)
     }
-  }, [sectionsData, isLoading])
+  }, [usersData, isLoading])
 
 
   if (isLoading) {
@@ -48,27 +46,24 @@ export default function SectionTable(
         <thead>
           <tr>
             <th className={tdStyle}>№</th>
-            <th className={tdStyle}>Название</th>
-            <th className={tdStyle}>Сотрудников</th>
-            {
-              edit && <th></th>
-            }
+            <th className={tdStyle}>Сотрудник</th>
+            <th className={tdStyle}>Email</th>
+            <th className={tdStyle}>Телефон</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {sectionsData?.sections.map((s, i) => (
-            <tr key={s.id}>
+          {usersData?.users.map((u, i) => (
+            <tr key={u.id}>
               <td className={tdStyle + " align-items-end"}><p>{startNumber + i}</p></td>
-              <td className={tdStyle}>{s.name}</td>
-              <td className={tdStyle + " text-center"}>{JSON.stringify(s["_count"].users)}</td>
-                {
-                  edit &&
-                  <td className={tdStyle + " border-none"}>
-                    <Link href={`/section/${s.id}`}>
-                      <PencilSquareIcon className="w-4" />
-                    </Link>
-                  </td>
-                }
+              <td className={tdStyle}>{u.surname + " " + u.name.substring(0,1) + ". " + u.fathername.substring(0,1) + "."}</td>
+              <td className={tdStyle}>{u.email}</td>
+              <td className={tdStyle}>{u.phone}</td>
+              <td className={tdStyle + " border-none"}>
+                <Link href={`/user/${u.id}`}>
+                    <PencilSquareIcon className="w-4" />
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>

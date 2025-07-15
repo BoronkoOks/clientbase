@@ -50,8 +50,8 @@ export default function SigninForm () {
                         else {
                             setErrMessage("")
 
-                            Cookies.set(cookieName, data?.toString() ?? "", { 
-                                expires: 1, // Печенька будет действительна 1 день
+                            Cookies.set(cookieName, data?.toString() ?? "", {
+                                expires: 0.5, // Печенька будет действительна 12 часов
                                 path: '/'
                             })
                         

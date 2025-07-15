@@ -5,6 +5,9 @@ const prisma = new PrismaClient()
 
 const sections = [
     {
+        name: "Бухгалтерия"
+    },
+    {
         name: "Техподдержка"
     },
     {
@@ -12,7 +15,7 @@ const sections = [
     },
     {
         name: "Отдел продаж"
-    }
+    },
 ]
 
 const users = [
@@ -29,7 +32,7 @@ const users = [
     {
         email: "chernisheva@yandex.ru",
         password: "1234",
-        phone: "8-111-111-11-11",
+        phone: "8-800-111-11-11",
         surname: "Чернышева",
         name: "Виктория",
         fathername: "Сергеевна",
@@ -39,7 +42,7 @@ const users = [
     {
         email: "koroleva@yandex.ru",
         password: "1234",
-        phone: "8-111-111-11-12",
+        phone: "8-800-222-22-22",
         surname: "Королева",
         name: "Ольга",
         fathername: "Артёмовна",
@@ -49,7 +52,7 @@ const users = [
     {
         email: "nazarov@yandex.ru",
         password: "1234",
-        phone: "8-111-111-11-13",
+        phone: "8-800-333-33-33",
         surname: "Назаров",
         name: "Константин",
         fathername: "Львович",
@@ -59,7 +62,7 @@ const users = [
     {
         email: "ananjev@yandex.ru",
         password: "1234",
-        phone: "8-111-111-11-14",
+        phone: "8-800-444-44-44",
         surname: "Ананьев",
         name: "Роман",
         fathername: "Никитич",
@@ -69,7 +72,7 @@ const users = [
     {
         email: "nesterov@yandex.ru",
         password: "1234",
-        phone: "8-111-111-11-15",
+        phone: "8-800-555-55-55",
         surname: "Нестеров",
         name: "Михаил",
         fathername: "Павлович",
@@ -79,7 +82,7 @@ const users = [
     {
         email: "michailov@yandex.ru",
         password: "1234",
-        phone: "8-111-111-11-16",
+        phone: "8-800-666-66-66",
         surname: "Михайлов",
         name: "Никита",
         fathername: "Тимурович",
@@ -89,7 +92,7 @@ const users = [
     {
         email: "denisova@yandex.ru",
         password: "1234",
-        phone: "8-111-111-11-17",
+        phone: "8-800-777-77-77",
         surname: "Денисова",
         name: "Ольга",
         fathername: "Александровна",
@@ -99,7 +102,7 @@ const users = [
     {
         email: "visotskaja@yandex.ru",
         password: "1234",
-        phone: "8-111-111-11-18",
+        phone: "8-800-888-88-88",
         surname: "Высоцкая",
         name: "Олеся",
         fathername: "Тихоновна",
@@ -109,7 +112,7 @@ const users = [
     {
         email: "solovjeva@yandex.ru",
         password: null,
-        phone: "8-111-111-11-19",
+        phone: "8-800-999-99-99",
         surname: "Соловьева",
         name: "Мелания",
         fathername: "Егоровна",

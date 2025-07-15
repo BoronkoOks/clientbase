@@ -27,3 +27,14 @@ export async function checkEditedSectionDuplicates (name: string, id: string) {
 
     return result
 }
+
+
+export async function numberOfUsers (sectionId: string) {
+    const result = await db.user.count({
+        where: {
+            sectionId: sectionId
+        }
+    })
+
+    return result
+}

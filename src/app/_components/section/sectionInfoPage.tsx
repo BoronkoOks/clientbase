@@ -3,16 +3,18 @@
 import { useEffect, useState, useContext} from 'react'
 import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { sessionCookieName } from '../../api/context/contextVariables'
 import SectionUserTable from './usersRelated/sectionUserTable'
 import SearchInput from '~/app/ui/searchInput'
 import { deleteButtonStyle, updateButtonStyle } from '~/styles/daisystyles'
-import { checkEditedSectionDuplicates } from '~/app/api/action/section'
+import { checkEditedSectionDuplicates, numberOfUsers } from '~/app/api/action/section'
+import { error } from 'console'
 
-export default function SectionInfoPage ({id, sectionName} : {id: string, sectionName: string}) {
-    const searchParams = useSearchParams()
-    const pathname = usePathname()
+export default function SectionInfoPage (
+    {id, sectionName} : {id: string, sectionName: string}
+)
+{
     const router = useRouter()
     const inputClassStyle = "input input-bordered"
 
@@ -22,8 +24,12 @@ export default function SectionInfoPage ({id, sectionName} : {id: string, sectio
     const [name, setName] = useState<string>(sectionName)
     const [errMessage, setErrMessage] = useState<string>("")
 
+    const updateSectionMutation = api.section.changeName.useMutation()
+    const deleteSectionMutation = api.section.deleteSection.useMutation()
+    const utils = api.useUtils()
 
     const { data: userData, isLoading } = api.user.getRole.useQuery({token: token ?? ""})
+
 
     useEffect(() => {
         if (!isLoading) {
@@ -34,6 +40,53 @@ export default function SectionInfoPage ({id, sectionName} : {id: string, sectio
     }, [isLoading, userData, router])
 
 
+    function Save() {
+        updateSectionMutation.mutate(
+            {
+                id: id,
+                name: name
+            },
+            {
+                onSuccess: (data) => {
+                    if (data.resultMessage == "Название обновлено") {
+                        utils.section.getSectionList.invalidate()
+                        setErrMessage("")
+                    }
+                    else {
+                        setErrMessage(data.resultMessage)
+                    }
+                },
+                onError: (error) => {
+                    setErrMessage(JSON.stringify(error))
+                }
+            }
+        )
+    }
+
+    function Delete() {
+        deleteSectionMutation.mutate(
+            {
+                id: id
+            },
+            {
+                onSuccess: (data) => {
+                    if (data.resultMessage == "Подразделение удалено") {
+                        setErrMessage("")
+                        utils.section.getSectionList.invalidate()
+                        router.push('/section')
+                    }
+                    else {
+                        setErrMessage(data.resultMessage)
+                    }
+                },
+                onError: (error) => {
+                    setErrMessage(JSON.stringify(error))
+                }
+            }
+        )
+    }
+
+
     async function handleSave () {
         if (name.trim() == "") {
             setErrMessage("Имя должно быть заполнено")
@@ -42,17 +95,24 @@ export default function SectionInfoPage ({id, sectionName} : {id: string, sectio
             const nameDuplicates = await checkEditedSectionDuplicates(name, id)
 
             if (nameDuplicates) {
-                setErrMessage("Названия отделов не должны повторяться")
+                setErrMessage("Названия подразделений не должны повторяться")
             }
             else {
-                setErrMessage("")
+                Save()
             }
-            
         }
     }
 
-    function handleDelete () {
 
+    async function handleDelete () {
+        const users = await numberOfUsers(id)
+
+        if (users > 0) {
+            setErrMessage("Нельзя удалить подразделение, в котором есть сотрудники")
+        }
+        else {
+            Delete()
+        }
     }
 
     

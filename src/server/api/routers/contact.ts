@@ -22,4 +22,28 @@ export const contactRouter = createTRPCRouter({
             return contact
         }),
 
+    createContact: publicProcedure // Добавить контакт клиенту
+        .input(
+            z.object({
+                surname: z.string(),
+                name: z.string(),
+                fathername: z.string(),
+                phone: z.string(),
+                companyId: z.string()
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const contact = await ctx.db.contact.create({
+                data: {
+                    surname: input.surname,
+                    name: input.name,
+                    fathername: input.fathername,
+                    phone: input.phone,
+                    companyID: input.companyId
+                }
+            })
+
+            return contact
+        }),
+
 })

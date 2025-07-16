@@ -1,6 +1,8 @@
 import PhoneInput from "./phoneInput"
 import SectionSelect from "./sectionSelect"
 import GroupDiv from "~/app/ui/groupDiv"
+import { useContext } from "react"
+import {inputClassStyleCtx} from "~/app/ui/styles"
 
 
 export default function ContactInfo (
@@ -16,7 +18,7 @@ export default function ContactInfo (
     }
 )
 {
-    const inputClassStyle = "input input-bordered"
+    const inputClassStyle = useContext(inputClassStyleCtx)
 
     return (
         <GroupDiv>

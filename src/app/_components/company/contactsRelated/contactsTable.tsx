@@ -24,13 +24,15 @@ export default function ContactsTable(
 
   const deleteContactMutation = api.contact.deleteContact.useMutation()
   const utils = api.useUtils()
+
+  const size = 8
   
-  const startNumber = (page - 1) * 10 + 1
+  const startNumber = (page - 1) * size + 1
 
   const tdStyle = "px-2 border border-black border-solid"
 
   const {data: contactsData, isLoading} = api.company.getContactList.useQuery({
-    companyId: companyId, query: query, page: page, size: 10})
+    companyId: companyId, query: query, page: page, size: size})
 
   const totalPages = contactsData ? (contactsData.pages > 0 ? contactsData.pages : 1) : 1
 

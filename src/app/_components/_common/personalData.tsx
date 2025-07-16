@@ -13,9 +13,10 @@ export default function PersonalData (
 ) {
     
     const inputClassStyle = "input input-bordered"
+    const divBox = "border-blue-300 border-2 py-2 px-4 rounded-lg"
 
     return (
-        <GroupDiv>
+        <div className = {divBox}>
             <p className="mb-4"><b>Личные данные*</b></p>
             <div>
                 <label>Фамилия</label>
@@ -47,6 +48,6 @@ export default function PersonalData (
                     onChange={(e)=> fathernameChange(e.target.value)}
                 />
             </div>
-        </GroupDiv>
+        </div>
     )
 }

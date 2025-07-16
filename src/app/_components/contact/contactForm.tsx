@@ -1,6 +1,5 @@
 import { Contact } from "@prisma/client"
-import PersonalData from "../../_common/personalData"
-import PhoneInput from "../../_common/phoneInput"
+import PhoneInput from "../_common/phoneInput"
 
 export default function ContactForm (
     {contact, contactChange} : {contact: Contact, contactChange: (c: Contact) => void}

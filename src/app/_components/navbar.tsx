@@ -6,17 +6,16 @@ import { usePathname } from 'next/navigation'
 import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
 import { sessionCookieName } from "../api/context/contextVariables"
+import { mainColorCtx } from "~/app/ui/styles"
 
 
 export function Navbar () {
-
-    const mainColor = "blue"
-
     const cookieName = useContext(sessionCookieName)
 
+    const mainColor = useContext(mainColorCtx)
     const navbarButton = "btn bg-" + mainColor + "-400 border-1 rounded-none border-" + mainColor + "-600 hover:text-gray-50 hover:bg-" + mainColor + "-600"
     const currentPageButton = "btn bg-gray-100 border-2 rounded-none border-" + mainColor + "-600 border-b-0 hover:text-gray-50 hover:bg-" + mainColor + "-600"
-
+    
     const [currentPage, setCurrentPage] = useState(usePathname())
 
     const {data: role, isLoading} = api.user.getRole.useQuery({token: Cookies.get(cookieName) ?? ""})
@@ -25,7 +24,6 @@ export function Navbar () {
     if (isLoading) {
         return <>Загрузка...</>
     }
-
 
     return (
         <div className = "navbar bg-gray-100">

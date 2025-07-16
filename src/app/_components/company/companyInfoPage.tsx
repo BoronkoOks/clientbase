@@ -12,8 +12,8 @@ import { Company, Contact } from '@prisma/client'
 import GroupDiv from '~/app/ui/groupDiv'
 import { checkEditedEmailDuplicates, checkEditedTINDuplicates } from '~/app/api/action/company'
 import ContactsTable from './contactsRelated/contactsTable'
-import ContactForm from './contactsRelated/contactForm'
 import Link from 'next/link'
+import { ArrowLongDownIcon } from '@heroicons/react/24/outline'
 
 export default function CompanyInfoPage (
     {companyInf} : {companyInf: Company}
@@ -163,6 +163,29 @@ export default function CompanyInfoPage (
                             }
                         </div>
                     </td>
+                    <td className = "align-top pl-14" rowSpan={2}>
+                        <div className = "border-2 border-gray-500 rounded-lg pl-2">
+                                    <details className = "collapse" tabIndex={0}>
+                                        <summary className = "collapse-title">
+                                            <div className = "flex">
+                                                <p>Контакты</p>
+                                                <ArrowLongDownIcon className = "w-6" />
+                                            </div>
+                                        </summary>
+                                        <div className = "mb-4 mx-4">
+                        <div className = "mb-4">
+                            {/* <label className = "mt-2 mr-4 inline-block align-middle">Контакты</label> */}
+                            <Link href = {"/contact/new?company="+company.id}
+                                className = "btn bg-blue-400 border-2 border-blue-600 mt-3 hover:text-gray-50 hover:bg-blue-600">
+                                    {"Добавить контактное лицо ->"}
+                            </Link>
+                        </div>
+                        <SearchInput placeholder = "Поиск по фамилии или телефону" />
+                        <ContactsTable companyId = {company.id} edit = {userData == "ADMIN"} />
+                        </div>
+            </details> 
+        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td className = "align-top pt-4">
@@ -173,17 +196,7 @@ export default function CompanyInfoPage (
                             />
                         </GroupDiv>
                     </td>
-                    <td className = "align-top pl-14">
-                        <div className = "mb-4">
-                            <label className = "mt-2 mr-4 inline-block align-middle">Контакты</label>
-                            <Link href = {"/contact/new?company="+company.id}
-                                className = "btn bg-blue-400 border-2 border-blue-600 mt-3 hover:text-gray-50 hover:bg-blue-600">
-                                    Добавить
-                            </Link>
-                        </div>
-                        <SearchInput placeholder = "Поиск по фамилии или телефону" />
-                        <ContactsTable companyId = {company.id} edit = {userData == "ADMIN"} />
-                    </td>
+                    
                 </tr>
             </tbody>
         </table>

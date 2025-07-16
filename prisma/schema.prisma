@@ -76,7 +76,7 @@ model Contact {
     surname       String
     name          String
     fathername    String
-    phone         String @unique
+    phone         String
 
     company Company @relation(fields: [companyID], references: [id], onDelete: Cascade)
     companyID String

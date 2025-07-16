@@ -121,86 +121,199 @@ const users = [
     }
 ]
 
-const clients = [
+const companies = [
     {
         email: "andreevaam@yandex.ru",
-        phone: "8-222-222-22-22",
-        surname: "Андреева",
-        name: "Арина",
-        fathername: "Максимовна",
-        companyname: "ИП Андреева А.М."
+        companyname: "ИП Андреева А.М.",
+        TIN: "551211692822"
     },
     {
         email: "zhykovamm@yandex.ru",
-        phone: "8-222-222-22-23",
-        surname: "Жукова",
-        name: "Мария",
-        fathername: "Матвеевна",
-        companyname: "ИП Жукова М.М."
+        companyname: "ИП Жукова М.М.",
+        TIN: "550637263549"
     },
     {
         email: "spiridonovakt@yandex.ru",
-        phone: "8-222-222-22-24",
-        surname: "Спиридонова",
-        name: "Камила",
-        fathername: "Тимофеевна",
-        companyname: "ИП Спиридонова К.Т."
+        companyname: "ИП Спиридонова К.Т.",
+        TIN: "550536752271"
     },
     {
-        email: "davidovivan@yandex.ru",
-        phone: "8-222-222-22-25",
-        surname: "Давыдов",
-        name: "Иван",
-        fathername: "Кириллович",
-        companyname: null
+        email: "figvam@yandex.ru",
+        companyname: "ООО Фигвам",
+        TIN: "55030215623"
     },
     {
-        email: "gromovaamina@yandex.ru",
-        phone: "8-222-222-22-26",
-        surname: "Громова",
-        name: "Амина",
-        fathername: "Максимовна",
-        companyname: null
+        email: "thunderlightning@yandex.ru",
+        companyname: "ООО Гром и молнии",
+        TIN: "550377550183"
     },
     {
         email: "prokofjevasofi@yandex.ru",
-        phone: "8-222-222-22-27",
-        surname: "Прокофьева",
-        name: "София",
-        fathername: "Максимовна",
-        companyname: null
+        companyname: "ИП Прокофьева С.М.",
+        TIN: "55061091345"
     },
     {
         email: "iljincorp@yandex.ru",
-        phone: "8-222-222-22-28",
-        surname: "Ильин",
-        name: "Арсений",
-        fathername: "Кириллович",
-        companyname: "ООО Iljin Corporation"
+        companyname: "ООО Iljin Corporation",
+        TIN: "550455198621"
     },
     {
         email: "greencompany@yandex.ru",
-        phone: "8-222-222-22-29",
-        surname: "Зеленина",
-        name: "Полина",
-        fathername: "Дмитриевна",
-        companyname: "ООО Сибирские леса"
+        companyname: "ООО Сибирские леса",
+        TIN: "550603662959"
     },
     {
         email: "watersource@yandex.ru",
-        phone: "8-222-222-22-30",
-        surname: "Сухарева",
-        name: "Алина",
-        fathername: "Елисеевна",
-        companyname: "ООО Чистая вода"
+        companyname: "ООО Чистая вода",
+        TIN: "550383732530"
     },
     {
         email: "lolkekcheburek@yandex.ru",
-        phone: "8-222-222-22-31",
+        companyname: "ООО Чебурек",
+        TIN: "551275717783"
+    },
+]
+
+const contacts = [
+    {
+        surname: "Андреева",
+        name: "Арина",
+        fathername: "Максимовна",
+        companyname: "ИП Андреева А.М.",
+        phone: "8-111-111-11-11"
+    },
+    {
+        surname: "Дмитриева",
+        name: "Дарья",
+        fathername: "Алексеевна",
+        companyname: "ИП Андреева А.М.",
+        phone: "8-111-111-11-22"
+    },
+    {
+        surname: "Жукова",
+        name: "Мария",
+        fathername: "Матвеевна",
+        companyname: "ИП Жукова М.М.",
+        phone: "8-222-222-22-11"
+    },
+    {
+        surname: "Глебов",
+        name: "Артемий",
+        fathername: "Тимофеевич",
+        companyname: "ИП Жукова М.М.",
+        phone: "8-222-222-22-22"
+    },
+    {
+        surname: "Спиридонова",
+        name: "Камила",
+        fathername: "Тимофеевна",
+        companyname: "ИП Спиридонова К.Т.",
+        phone: "8-333-333-33-11"
+    },
+    {
+        surname: "Кравцова",
+        name: "Мария",
+        fathername: "Марковна",
+        companyname: "ИП Спиридонова К.Т.",
+        phone: "8-333-333-33-22"
+    },
+    {
+        surname: "Давыдов",
+        name: "Иван",
+        fathername: "Кириллович",
+        companyname: "ООО Фигвам",
+        phone: "8-444-444-44-11"
+    },
+    {
+        surname: "Дмитриев",
+        name: "Богдан",
+        fathername: "Демьянович",
+        companyname: "ООО Фигвам",
+        phone: "8-444-444-44-22"
+    },
+    {
+        surname: "Громова",
+        name: "Амина",
+        fathername: "Максимовна",
+        companyname: "ООО Гром и молнии",
+        phone: "8-666-666-66-11"
+    },
+    {
+        surname: "Харитонов",
+        name: "Матвей",
+        fathername: "Даниэльевич",
+        companyname: "ООО Гром и молнии",
+        phone: "8-666-666-66-22"
+    },
+    {
+        surname: "Прокофьева",
+        name: "София",
+        fathername: "Максимовна",
+        companyname: "ИП Прокофьева С.М.",
+        phone: "8-777-777-77-11"
+    },
+    {
+        surname: "Смирнов",
+        name: "Егор",
+        fathername: "Никитич",
+        companyname: "ИП Прокофьева С.М.",
+        phone: "8-777-777-77-22"
+    },
+    {
+        surname: "Ильин",
+        name: "Арсений",
+        fathername: "Кириллович",
+        companyname: "ООО Iljin Corporation",
+        phone: "8-888-888-88-11"
+    },
+    {
+        surname: "Фомин",
+        name: "Иван",
+        fathername: "Егорович",
+        companyname: "ООО Iljin Corporation",
+        phone: "8-888-888-88-22"
+    },
+    {
+        surname: "Зеленина",
+        name: "Полина",
+        fathername: "Дмитриевна",
+        companyname: "ООО Сибирские леса",
+        phone: "8-999-999-99-11"
+    },
+    {
+        surname: "Никитин",
+        name: "Богдан",
+        fathername: "Викторович",
+        companyname: "ООО Сибирские леса",
+        phone: "8-999-999-99-22"
+    },
+    {
+        surname: "Сухарева",
+        name: "Алина",
+        fathername: "Елисеевна",
+        companyname: "ООО Чистая вода",
+        phone: "8-000-000-00-11"
+    },
+    {
+        surname: "Малинина",
+        name: "Злата",
+        fathername: "Арсентьевна",
+        companyname: "ООО Чистая вода",
+        phone: "8-000-000-00-22"
+    },
+    {
         surname: "Николаева",
         name: "Ольга",
         fathername: "Родионовна",
-        companyname: "ООО Чебурек"
+        companyname: "ООО Чебурек",
+        phone: "8-555-555-55-11"
+    },
+    {
+        surname: "Смирнов",
+        name: "Григорий",
+        fathername: "Даниилович",
+        companyname: "ООО Чебурек",
+        phone: "8-555-555-55-22"
     },
 ]
 
@@ -209,7 +322,8 @@ async function main() {
     await prisma.session.deleteMany()
     await prisma.user.deleteMany()
     await prisma.section.deleteMany()
-    await prisma.client.deleteMany()
+    await prisma.contact.deleteMany()
+    await prisma.company.deleteMany()
 
     await Promise.all(
         sections.map(async (section) => {
@@ -246,9 +360,29 @@ async function main() {
     )
 
     await Promise.all(
-        clients.map(async (client) => {
-            await prisma.client.create({
-                data: client
+        companies.map(async (company) => {
+            await prisma.company.create({
+                data: company
+            })
+        })
+    )
+
+    await Promise.all(
+        contacts.map(async (contact) => {
+            const company = await prisma.company.findFirstOrThrow({
+                where: {
+                    companyname: contact.companyname
+                }
+            })
+            
+            await prisma.contact.create({
+                data: {
+                    surname: contact.surname,
+                    name: contact.name,
+                    fathername: contact.fathername,
+                    phone: contact.phone,
+                    companyID: company.id
+                }
             })
         })
     )

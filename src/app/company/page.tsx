@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { api } from "~/trpc/react"
 import { sessionCookieName } from '../api/context/contextVariables'
 import Cookies from 'js-cookie'
-import ClientPage from '../_components/client/clientPage'
+import ClientPage from '../_components/company/companyPage'
 
 
 export default function Page () {

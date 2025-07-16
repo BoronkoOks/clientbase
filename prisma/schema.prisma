@@ -78,6 +78,6 @@ model Contact {
     fathername    String
     phone         String @unique
 
-    company Company @relation(fields: [companyID], references: [id])
+    company Company @relation(fields: [companyID], references: [id], onDelete: Cascade)
     companyID String
 }

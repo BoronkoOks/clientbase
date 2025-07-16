@@ -5,13 +5,15 @@ import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
 import { useRouter } from "next/navigation"
 import { sessionCookieName } from '../../api/context/contextVariables'
-import SectionUserTable from './usersRelated/sectionUserTable'
 import SearchInput from '~/app/ui/searchInput'
 import { deleteButtonStyle, updateButtonStyle } from '~/styles/daisystyles'
-import { checkEditedSectionDuplicates, numberOfUsers } from '~/app/api/action/section'
+import CompanyInfo from './companyInfo'
+import { Company } from '@prisma/client'
+import GroupDiv from '~/app/ui/groupDiv'
+import { checkEditedEmailDuplicates, checkEditedTINDuplicates } from '~/app/api/action/company'
 
-export default function SectionInfoPage (
-    {id, sectionName} : {id: string, sectionName: string}
+export default function CompanyInfoPage (
+    {companyInf} : {companyInf: Company}
 )
 {
     const router = useRouter()
@@ -20,11 +22,11 @@ export default function SectionInfoPage (
     const cookieName = useContext(sessionCookieName)
     const token = Cookies.get(cookieName)
 
-    const [name, setName] = useState<string>(sectionName)
+    const [company, setCompany] = useState<Company>(companyInf)
     const [errMessage, setErrMessage] = useState<string>("")
 
-    const updateSectionMutation = api.section.changeName.useMutation()
-    const deleteSectionMutation = api.section.deleteSection.useMutation()
+    const updateCompanyMutation = api.company.updateCompany.useMutation()
+    const deleteCompanyMutation = api.company.deleteCompany.useMutation()
     const utils = api.useUtils()
 
     const { data: userData, isLoading } = api.user.getRole.useQuery({token: token ?? ""})
@@ -40,15 +42,17 @@ export default function SectionInfoPage (
 
 
     function Save() {
-        updateSectionMutation.mutate(
+        updateCompanyMutation.mutate(
             {
-                id: id,
-                name: name
+                id: company.id,
+                companyname: company.companyname,
+                TIN: company.TIN,
+                email: company.email
             },
             {
                 onSuccess: (data) => {
-                    if (data.resultMessage == "Название обновлено") {
-                        utils.section.getSectionList.invalidate()
+                    if (data.resultMessage == "Успешно") {
+                        utils.company.getCompanyList.invalidate()
                         setErrMessage("")
                     }
                     else {
@@ -63,16 +67,16 @@ export default function SectionInfoPage (
     }
 
     function Delete() {
-        deleteSectionMutation.mutate(
+        deleteCompanyMutation.mutate(
             {
-                id: id
+                id: company.id
             },
             {
                 onSuccess: (data) => {
-                    if (data.resultMessage == "Подразделение удалено") {
-                        setErrMessage("")
-                        utils.section.getSectionList.invalidate()
-                        router.push('/section')
+                    if (data.resultMessage == "Успешно") {
+                        setErrMessage("Клиент удалён")
+                        utils.company.getCompanyList.invalidate()
+                        router.push('/company')
                     }
                     else {
                         setErrMessage(data.resultMessage)
@@ -87,27 +91,37 @@ export default function SectionInfoPage (
 
 
     async function handleSave () {
-        if (name.trim() == "") {
-            setErrMessage("Имя должно быть заполнено")
+        if (company.companyname.trim() == "" || company.TIN.length == 0 || company.email.length == 0) {
+            setErrMessage("Необходимо заполнить все поля")
         }
         else {
-            const nameDuplicates = await checkEditedSectionDuplicates(name, id)
-
-            if (nameDuplicates) {
-                setErrMessage("Названия подразделений не должны повторяться")
+            if (company.TIN.length < 12) {
+                setErrMessage("ИНН должен состоять из 12 цифр")
             }
             else {
-                Save()
+                const TINduplicates= await checkEditedTINDuplicates(company.TIN, company.id)
+
+                if (TINduplicates) {
+                    setErrMessage("ИНН клиентов не должны повторяться")
+                }
+                else {
+                    const emailDuplicates = await checkEditedEmailDuplicates(company.email, company.id)
+
+                    if (emailDuplicates) {
+                        setErrMessage("email клиентов не должны повторяться")
+                    }
+                    else {
+                        Save()
+                    }
+                }
             }
         }
     }
 
 
     async function handleDelete () {
-        const users = await numberOfUsers(id)
-
-        if (users > 0) {
-            setErrMessage("Нельзя удалить подразделение, в котором есть сотрудники")
+        if (errMessage != "Точно удалить?") {
+            setErrMessage("Точно удалить?")
         }
         else {
             Delete()
@@ -131,7 +145,7 @@ export default function SectionInfoPage (
                     <td className = "align-top" colSpan={2}>
                         <div>
                             <label className = "mt-2 mr-4 font-bold inline-block align-middle">
-                                Подразделение
+                                Компания
                             </label>
                             <button type="submit" className={updateButtonStyle + " inline-block"}
                                 onClick={() => handleSave()}>
@@ -150,19 +164,17 @@ export default function SectionInfoPage (
                 </tr>
                 <tr>
                     <td className = "align-top pt-4">
-                        <p className = "mr-2 pb-4">Название</p>
-                        <input
-                            type="text"
-                            required
-                            className= {inputClassStyle + " mt-1 mb-2"}
-                            value = {name}
-                            onChange={(e)=> setName(e.target.value)}
-                        />
+                        <GroupDiv>
+                            <CompanyInfo
+                                company = {company}
+                                companyChange = {setCompany}
+                            />
+                        </GroupDiv>
                     </td>
-                    <td className = "align-top pt-6 pl-16">
-                        <p className = "pb-4">Сотрудники</p>
+                    <td className = "align-top pt-4 pl-16">
+                        <p className = "pb-4">Контакты</p>
                         <SearchInput placeholder = "Поиск по фамилии, email или телефону" />
-                        <SectionUserTable sectionId = {id} />
+                        {/* <SectionUserTable sectionId = {id} /> */}
                     </td>
                 </tr>
             </tbody>

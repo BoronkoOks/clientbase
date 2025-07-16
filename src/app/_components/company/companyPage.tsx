@@ -9,7 +9,7 @@ import { sessionCookieName } from '../../api/context/contextVariables'
 import CompanyTable from './companyTable'
 import AddClient from './addCompany'
 
-export default function ClientPage () {
+export default function CompanyPage () {
     const router = useRouter()
 
     const cookieName = useContext(sessionCookieName)

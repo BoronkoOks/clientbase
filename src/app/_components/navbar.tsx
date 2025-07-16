@@ -60,8 +60,8 @@ export function Navbar () {
 
             {
                 role != "GUEST" &&
-                <Link href = "/client" onClick={()=> setCurrentPage("/client")}
-                    className = {currentPage == "/client" ? currentPageButton : navbarButton}>
+                <Link href = "/company" onClick={()=> setCurrentPage("/company")}
+                    className = {currentPage == "/company" ? currentPageButton : navbarButton}>
                         Клиенты
                 </Link>
             }

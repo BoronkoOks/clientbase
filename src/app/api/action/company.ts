@@ -16,3 +16,39 @@ export async function checkEmailuplicates (email: string) {
 
     return result
 }
+
+
+export async function checkEditedTINDuplicates (TIN: string, id: string) {
+    const result = await db.company.findFirst({
+        where: {
+            AND: [
+                {TIN: TIN},
+                {
+                    NOT: {
+                        id: id
+                    }
+                }
+            ]
+        }
+    }) ? true : false
+
+    return result
+}
+
+
+export async function checkEditedEmailDuplicates (email: string, id: string) {
+    const result = await db.company.findFirst({
+        where: {
+            AND: [
+                {email: email},
+                {
+                    NOT: {
+                        id: id
+                    }
+                }
+            ]
+        }
+    }) ? true : false
+
+    return result
+}

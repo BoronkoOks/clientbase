@@ -6,9 +6,8 @@ import {PlusIcon} from "@heroicons/react/16/solid"
 import { updateButtonStyle } from "~/styles/daisystyles"
 import { api } from "~/trpc/react"
 import { Company } from "@prisma/client"
-import TINField from "./tinField"
-import EmailInput from "../_common/emailInput"
 import { checkTINDuplicates, checkEmailuplicates } from "~/app/api/action/company"
+import CompanyInfo from "./companyInfo"
 
 export default function AddCompany() {
     const [company, setCompany] = useState<Company>({
@@ -94,38 +93,22 @@ export default function AddCompany() {
                     </div>
                 </summary>
                 <div className = "mb-2 mx-2 overscroll-x-contain">
-                    <div>
-                        <label>Название</label>
-                        <input
-                            type="text"
-                            required
-                            className= {inputClassStyle + " mt-1 mb-2"}
-                            maxLength={100}
-                            value = {company.companyname}
-                            onChange={(e)=> setCompany({...company, companyname: e.target.value})}
-                        />
-                    </div>
-                    <div>
-                        <TINField
-                            tin = {company.TIN}
-                            onChange = {val => setCompany({...company, TIN: val})}
-                        />
-                    </div>
-                    <div>
-                        <EmailInput
-                            email = {company.email}
-                            onChange = {val => setCompany({...company, email: val})}
-                        />
-                    </div>
+                    <CompanyInfo
+                        company = {company}
+                        companyChange = {setCompany}
+                    />
                     {
                         errMessage != "" &&
                         <label className = "mt-2 inline-block align-middle text-red-700">{errMessage}</label>
                     }
-                    <div className = "mb-1">
-                        <button className={updateButtonStyle + " w-full"} onClick={handleAdd}>
-                            Добавить
-                        </button>
-                    </div>
+                    {
+                        company.id == "" &&
+                        <div className = "mb-1">
+                            <button className={updateButtonStyle + " w-full"} onClick={handleAdd}>
+                                Добавить
+                            </button>
+                        </div>
+                    }
                 </div>
             </details>
         </GroupDiv>

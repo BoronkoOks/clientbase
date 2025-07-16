@@ -8,16 +8,18 @@ import { sessionCookieName } from '../../api/context/contextVariables'
 import SearchInput from '~/app/ui/searchInput'
 import { deleteButtonStyle, updateButtonStyle } from '~/styles/daisystyles'
 import CompanyInfo from './companyInfo'
-import { Company } from '@prisma/client'
+import { Company, Contact } from '@prisma/client'
 import GroupDiv from '~/app/ui/groupDiv'
 import { checkEditedEmailDuplicates, checkEditedTINDuplicates } from '~/app/api/action/company'
+import ContactsTable from './contactsRelated/contactsTable'
+import ContactForm from './contactsRelated/contactForm'
+import Link from 'next/link'
 
 export default function CompanyInfoPage (
     {companyInf} : {companyInf: Company}
 )
 {
     const router = useRouter()
-    const inputClassStyle = "input input-bordered"
 
     const cookieName = useContext(sessionCookieName)
     const token = Cookies.get(cookieName)
@@ -171,10 +173,16 @@ export default function CompanyInfoPage (
                             />
                         </GroupDiv>
                     </td>
-                    <td className = "align-top pt-4 pl-16">
-                        <p className = "pb-4">Контакты</p>
-                        <SearchInput placeholder = "Поиск по фамилии, email или телефону" />
-                        {/* <SectionUserTable sectionId = {id} /> */}
+                    <td className = "align-top pl-14">
+                        <div className = "mb-4">
+                            <label className = "mt-2 mr-4 inline-block align-middle">Контакты</label>
+                            <Link href = {"/contact/new?company="+company.id}
+                                className = "btn bg-blue-400 border-2 border-blue-600 mt-3 hover:text-gray-50 hover:bg-blue-600">
+                                    Добавить
+                            </Link>
+                        </div>
+                        <SearchInput placeholder = "Поиск по фамилии или телефону" />
+                        <ContactsTable companyId = {company.id} edit = {userData == "ADMIN"} />
                     </td>
                 </tr>
             </tbody>

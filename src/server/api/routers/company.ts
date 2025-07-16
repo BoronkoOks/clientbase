@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { createTRPCRouter, publicProcedure } from "../trpc"
-import { Company } from '@prisma/client'
+import { Company, Contact } from '@prisma/client'
 
 type res = { company: Company | null, resultMessage: string }
 
@@ -222,6 +222,100 @@ export const companyRouter = createTRPCRouter({
             }
 
             return result
+        }),
+
+    getContactList: publicProcedure // Получить список контактов компании
+        .input(
+            z.object({
+                companyId: z.string(),
+                query: z.string(),
+                page: z.number().optional(),
+                size: z.number().optional()
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const page = input.page ?? 1
+            const size = input.size ?? 0
+
+            let contacts: Contact[] = []
+            let pages = 0
+
+            if (size > 0) {
+                contacts = await ctx.db.contact.findMany({
+                    where: {
+                        AND: [
+                            {
+                                companyID: input.companyId
+                            },
+                            {
+                                OR: [
+                                    {
+                                        surname: {
+                                            startsWith: input.query,
+                                            mode: "insensitive"
+                                        }
+                                    },
+                                    {
+                                        phone: {
+                                            startsWith: input.query,
+                                            mode: "insensitive"
+                                        }
+                                    }
+                                ]
+                            }  
+                        ]
+                    },
+                    orderBy: [
+                        {surname: "asc"},
+                        {phone: "asc"}
+                    ],
+                    skip: (page - 1) * size,
+                    take: size
+                })
+
+                const count = await ctx.db.contact.count({
+                    where: {
+                        companyID: input.companyId
+                    }
+                })
+
+                pages = Math.ceil(Number(count) / size)
+            }
+            else {
+                contacts = await ctx.db.contact.findMany({
+                    where: {
+                        AND: [
+                            {
+                                companyID: input.companyId
+                            },
+                            {
+                                OR: [
+                                    {
+                                        surname: {
+                                            startsWith: input.query,
+                                            mode: "insensitive"
+                                        }
+                                    },
+                                    {
+                                        phone: {
+                                            startsWith: input.query,
+                                            mode: "insensitive"
+                                        }
+                                    }
+                                ]
+                            }  
+                        ]
+                    },
+                    orderBy: [
+                        {surname: "asc"},
+                        {phone: "asc"}
+                    ]
+                })
+            }
+            
+            const contactsData = {contacts: contacts, pages: pages}
+
+            return contactsData
         }),
 
 })

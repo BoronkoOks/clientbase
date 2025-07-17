@@ -6,6 +6,7 @@ import Link from "next/link"
 import { api } from "~/trpc/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import Pagination from "~/app/ui/pagination"
+import { Company } from "@prisma/client"
 
 
 export default function CompanyTable({edit = false} : {edit: boolean})
@@ -16,23 +17,26 @@ export default function CompanyTable({edit = false} : {edit: boolean})
   const pathname = usePathname()
   const { replace } = useRouter()
   
-  const startNumber = (page - 1) * 10 + 1
+  const size = 10
+  const startNumber = (page - 1) * size + 1
 
   const tdStyle = "px-2 border border-black border-solid"
 
   const {data: companiesData, isLoading} = api.company.getCompanyList.useQuery({
-    query: query, page: page, size: 10})
+    query: query, page: page, size: size})
 
   const totalPages = companiesData ? (companiesData.pages > 0 ? companiesData.pages : 1) : 1
 
 
   useEffect (() => {
-    if (totalPages < page) {
-      const params = new URLSearchParams(searchParams)
-      params.set("page", totalPages.toString())
-      replace(`${pathname}?${params.toString()}`)
+    if (!isLoading) {
+      if (totalPages < page) {
+        const params = new URLSearchParams(searchParams)
+        params.set("page", totalPages.toString())
+        replace(`${pathname}?${params.toString()}`)
+      }
     }
-  }, [companiesData, isLoading])
+  }, [isLoading, companiesData])
 
 
   if (isLoading) {

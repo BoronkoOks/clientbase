@@ -52,3 +52,36 @@ export async function checkEditedEmailDuplicates (email: string, id: string) {
 
     return result
 }
+
+
+export async function getCompanyList (query: string = "") {
+    const companies = await db.company.findMany({
+        where: {
+            OR: [
+                {
+                    companyname: {
+                        startsWith: query,
+                        mode: "insensitive"
+                    }
+                },
+                {
+                    email: {
+                        startsWith: query,
+                        mode: "insensitive"
+                    }
+                },
+                {
+                    TIN: {
+                        startsWith: query,
+                        mode: "insensitive"
+                    }
+                }
+            ]
+        },
+        orderBy: {
+            companyname: "asc"
+        }
+    })
+
+    return companies
+}

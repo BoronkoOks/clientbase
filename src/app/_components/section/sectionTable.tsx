@@ -29,10 +29,12 @@ export default function SectionTable(
 
 
   useEffect (() => {
-    if (totalPages < page) {
-      const params = new URLSearchParams(searchParams)
-      params.set("page", totalPages.toString())
-      replace(`${pathname}?${params.toString()}`)
+    if (!isLoading) {
+      if (totalPages < page) {
+        const params = new URLSearchParams(searchParams)
+        params.set("page", totalPages.toString())
+        replace(`${pathname}?${params.toString()}`)
+      }
     }
   }, [sectionsData, isLoading])
 

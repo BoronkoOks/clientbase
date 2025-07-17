@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { api } from "~/trpc/react"
 import { sessionCookieName } from '../api/context/contextVariables'
 import Cookies from 'js-cookie'
-import ClientPage from '../_components/company/companyPage'
+import CompanyPage from '../_components/company/companyPage'
 
 
 export default function Page () {
@@ -30,7 +30,7 @@ export default function Page () {
             <tbody>
                 <tr>
                     <td className = "align-top pl-4 pt-4">
-                        <ClientPage />
+                        <CompanyPage />
                     </td>
                 </tr>
             </tbody>

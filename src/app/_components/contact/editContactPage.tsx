@@ -6,19 +6,21 @@ import Cookies from 'js-cookie'
 import { sessionCookieName } from '../../api/context/contextVariables'
 import { updateButtonStyle } from '~/styles/daisystyles'
 import { Contact } from '@prisma/client'
-import { useRouter, useSearchParams } from "next/navigation"
-import {checkPhoneDuplicates} from "~/app/api/action/contact"
+import { useRouter, useSearchParams, useParams } from "next/navigation"
+import {checkEditedPhoneDuplicates, loadContactData} from "~/app/api/action/contact"
 import ContactForm from './contactForm'
 
-export default function NewContactPage (
-{ companyname } : {companyname: string}
+export default function EditContactPage (
+    { companyname } : { companyname: string}
 )
 {
     const searchParams = useSearchParams()
     const companyId = searchParams.get("company") || ""
+    const params = useParams()
+    const id = String(params.id) ?? ""
 
     const [contact, setContact] = useState<Contact>({
-        id: "",
+        id: id,
         surname: "",
         name: "",
         fathername: "",
@@ -33,9 +35,24 @@ export default function NewContactPage (
 
     const { data: userData, isLoading } = api.user.getRole.useQuery({token: Cookies.get(cookieName) ?? ""})
 
-    const createContactMutation = api.contact.createContact.useMutation()
+    const updateContactMutation = api.contact.updateContact.useMutation()
     const utils = api.useUtils()
 
+
+    useEffect(() => {
+        async function LoadContactData() {
+            const contactData = await loadContactData(id)
+
+            if (contactData) {
+                setContact(contactData)
+            }
+            else {
+                setErrMessage("Контакт не найден")
+            }
+        }
+
+        LoadContactData()
+    }, [])
 
     useEffect(() => {
         if (!isLoading) {
@@ -46,9 +63,10 @@ export default function NewContactPage (
     }, [isLoading, userData, router])
 
 
-    function Add() {
-        createContactMutation.mutate(
+    function Save() {
+        updateContactMutation.mutate(
             {
+                id: contact.id,
                 surname: contact.surname,
                 name: contact.name,
                 fathername: contact.fathername,
@@ -69,21 +87,22 @@ export default function NewContactPage (
     }
 
 
-
-    async function handleAdd () {
-        if (contact.surname.trim() == "" || contact.name.trim() == "" || contact.fathername.trim() == ""
-            || contact.phone.length < 15)
-        {
-            setErrMessage("Все поля должны быть заполнены")
-        }
-        else {
-            const phoneExists = await checkPhoneDuplicates(contact.phone, contact.companyID)
-
-            if (phoneExists) {
-                setErrMessage("Контакт с таким телефоном уже существует")
+    async function handleSave() {
+        if (errMessage != "Контакт не найден") {
+            if (contact.surname.trim() == "" || contact.name.trim() == "" || contact.fathername.trim() == ""
+                || contact.phone.length < 15)
+            {
+                setErrMessage("Все поля должны быть заполнены")
             }
             else {
-                Add()
+                const phoneExists = await checkEditedPhoneDuplicates(contact.phone, contact.companyID, contact.id)
+
+                if (phoneExists) {
+                    setErrMessage("Контакт с таким телефоном уже существует")
+                }
+                else {
+                    Save()
+                }
             }
         }
     }
@@ -93,7 +112,10 @@ export default function NewContactPage (
         return <div>Клиент не найден</div>
     }
 
-    
+    if (errMessage == "Контакт не найден") {
+        return <div>Контакт не найден</div>
+    }
+
     if (isLoading) {
         return <div>загрузка...</div>
     }
@@ -103,18 +125,16 @@ export default function NewContactPage (
     }
 
     
-
-
     return (
         <table>
             <tbody>
                 <tr>
                     <td className = "pb-4">
                         <div>
-                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">Новый контакт для "{companyname}"</label>
+                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">Редактирование контакта для "{companyname}"</label>
                             <button type="submit" className={updateButtonStyle + " inline-block"}
-                                onClick={() => handleAdd()}>
-                                    Добавить
+                                onClick={() => handleSave()}>
+                                    Сохранить
                             </button>
                             {
                                 errMessage != "" &&

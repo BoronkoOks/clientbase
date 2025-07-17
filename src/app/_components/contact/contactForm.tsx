@@ -1,47 +1,46 @@
 import { Contact } from "@prisma/client"
 import PhoneInput from "../_common/phoneInput"
+import PersonalData from "../_common/personalData"
+import GroupDiv from "~/app/ui/groupDiv"
+import { useContext } from "react"
+import { inputClassStyleCtx } from "~/app/ui/styles"
 
 export default function ContactForm (
     {contact, contactChange} : {contact: Contact, contactChange: (c: Contact) => void}
 ) {
-    const inputClassStyle = "input input-bordered"
+    const inputClassStyle = useContext(inputClassStyleCtx)
 
     return (
-        <>
-            <div>
-                <label>Фамилия</label>
-                <input
-                    type="text"
-                    required
-                    className= {inputClassStyle + " mt-1 mb-2"}
-                    value = {contact.surname}
-                    onChange={(e)=> contactChange({...contact, surname: e.target.value})}
-                />
-            </div>
-            <div>
-                <label>Имя</label>
-                <input
-                    type="text"
-                    required
-                    className= {inputClassStyle + " mt-1 mb-2"}
-                    value = {contact.name}
-                    onChange={(e)=> contactChange({...contact, name: e.target.value})}
-                />
-            </div>
-            <div className = "mt-2">
-                <label>Отчество</label>
-                <input
-                    type="text"
-                    required
-                    className= {inputClassStyle + " mt-1 mb-2"}
-                    value = {contact.fathername}
-                    onChange={(e)=> contactChange({...contact, fathername: e.target.value})}
-                />
-            </div>
-            <PhoneInput
-                phone = {contact.phone}
-                onChange = {val => contactChange({...contact, phone: val})}
-            />
-        </>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <div className='max-w-80'>
+                            <PersonalData
+                                surname = {contact.surname}
+                                name = {contact.name}
+                                fathername = {contact.fathername}
+                                surnameChange={val => contactChange({...contact, surname: val})}
+                                nameChange={val => contactChange({...contact, name: val})}
+                                fathernameChange={val => contactChange({...contact, fathername: val})}
+                            />
+                        </div>
+                    </td>
+                    <td className = "pl-6 align-top">
+                        <GroupDiv>
+                            <div className='mb-2'>
+                                <p className="mb-4"><b>Телефон*</b></p>
+                                <PhoneInput
+                                    phone = {contact.phone}
+                                    onChange = {val => contactChange({...contact, phone: val})}
+                                    className = {inputClassStyle}
+                                />
+                            </div>
+                        </GroupDiv>
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
     )
 }

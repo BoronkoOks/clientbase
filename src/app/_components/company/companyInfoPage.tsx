@@ -164,7 +164,7 @@ export default function CompanyInfoPage (
                         </div>
                     </td>
                     <td className = "align-top pl-14" rowSpan={2}>
-                        <div className = "border-2 border-gray-500 rounded-lg pl-2">
+                        <GroupDiv>
                                     <details className = "collapse" tabIndex={0}>
                                         <summary className = "collapse-title">
                                             <div className = "flex">
@@ -184,7 +184,7 @@ export default function CompanyInfoPage (
                         <ContactsTable companyId = {company.id} edit = {userData == "ADMIN"} />
                         </div>
             </details> 
-        </div>
+        </GroupDiv>
                     </td>
                 </tr>
                 <tr>

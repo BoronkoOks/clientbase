@@ -1,4 +1,5 @@
 import React from "react"
+import EditContactPage from "~/app/_components/contact/editContactPage";
 import NewContactPage from "~/app/_components/contact/newContactPage";
 import { db } from "~/server/db";
 
@@ -24,7 +25,7 @@ export default async function Page (
                         {
                             id == "new" ? <NewContactPage companyname = {company?.companyname ?? ""}/> 
                             :
-                            <>{id} {company?.companyname}</>
+                            <EditContactPage companyname = {company?.companyname ?? ""} />
                         }
                     </td>
                 </tr>

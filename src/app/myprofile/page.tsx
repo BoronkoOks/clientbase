@@ -20,9 +20,9 @@ export default function Page () {
 
     useEffect(() => {
         if (!isLoading && !userdata) {
-            router.push('/signin');
+            router.push('/signin')
         }
-    }, [isLoading, userdata, router]);
+    }, [isLoading, userdata, router])
 
 
     if (isLoading) {

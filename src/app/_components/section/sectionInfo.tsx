@@ -2,41 +2,51 @@
 
 import { useEffect, useState, useContext} from 'react'
 import { api } from "~/trpc/react"
-import Cookies from 'js-cookie'
 import { useRouter } from "next/navigation"
-import { sessionCookieName } from '../../api/context/contextVariables'
 import SectionUserTable from './usersRelated/sectionUserTable'
 import SearchInput from '~/app/ui/searchInput'
-import { deleteButtonStyle, updateButtonStyle } from '~/styles/daisystyles'
-import { checkEditedSectionDuplicates, numberOfUsers } from '~/app/api/action/section'
+import { checkEditedSectionDuplicates, getSectionById, numberOfUsers } from '~/app/api/action/section'
+import { inputClassStyleCtx, regularButtonStyleCtx, labelInlineBlockStyleCtx } from '~/app/ui/styles'
+import { Err_404 } from '~/app/_components/_common/errorMessages'
+import DeleteButton from "~/app/_components/_common/deleteButton"
+import ErrLabel from "~/app/_components/_common/errLabel"
+import DropDown from "../_common/dropDown"
+import { ArrowLongDownIcon } from '@heroicons/react/24/outline'
+import GroupDiv from '~/app/ui/groupDiv'
 
-export default function SectionInfoPage (
-    {id, sectionName} : {id: string, sectionName: string}
-)
-{
+
+export default function SectionInfo ({id} : {id: string}){
     const router = useRouter()
-    const inputClassStyle = "input input-bordered"
 
-    const cookieName = useContext(sessionCookieName)
-    const token = Cookies.get(cookieName)
+    const inputClassStyle = useContext(inputClassStyleCtx)
+    const updateStyle = useContext(regularButtonStyleCtx)
+    const labelHeaderClass = useContext(labelInlineBlockStyleCtx)
 
-    const [name, setName] = useState<string>(sectionName)
+    const [name, setName] = useState<string>("")
     const [errMessage, setErrMessage] = useState<string>("")
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const updateSectionMutation = api.section.changeName.useMutation()
     const deleteSectionMutation = api.section.deleteSection.useMutation()
     const utils = api.useUtils()
 
-    const { data: userData, isLoading } = api.user.getRole.useQuery({token: token ?? ""})
-
 
     useEffect(() => {
-        if (!isLoading) {
-            if (!userData || !token) {
-                router.push('/signin')
+        async function GetSectionName() {
+            const section = await getSectionById(id)
+
+            if (section) {
+                setName(section.name)
             }
+            else {
+                setErrMessage("Подразделение не найдено")
+            }
+
+            setIsLoading(false)
         }
-    }, [isLoading, userData, router])
+        
+        GetSectionName()
+    }, [])
 
 
     function Save() {
@@ -102,7 +112,6 @@ export default function SectionInfoPage (
         }
     }
 
-
     async function handleDelete () {
         const users = await numberOfUsers(id)
 
@@ -114,13 +123,13 @@ export default function SectionInfoPage (
         }
     }
 
-    
+
     if (isLoading) {
         return <div>загрузка...</div>
     }
     
-    if (userData != "ADMIN" && userData != "SOTR") {
-        return <div>403 Forbidden</div>
+    if (errMessage == "Подразделение не найдено") {
+        return <Err_404 message = {errMessage} />
     }
 
 
@@ -128,41 +137,54 @@ export default function SectionInfoPage (
         <table>
             <tbody>
                 <tr>
-                    <td className = "align-top" colSpan={2}>
+                    <td className = "align-top">
                         <div>
-                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">
+                            <label className = {labelHeaderClass}>
                                 Подразделение
                             </label>
-                            <button type="submit" className={updateButtonStyle + " inline-block"}
-                                onClick={() => handleSave()}>
-                                    Обновить
+                            <button type="submit" className={updateStyle + " inline-block"} onClick={() => handleSave()}>
+                                Обновить
                             </button>
-                            <button type="submit" className={deleteButtonStyle + " mt-3 ml-4 inline-block"}
-                                onClick={() => handleDelete()}>
-                                    Удалить
-                            </button>
-                            {
-                                errMessage != "" &&
-                                <label className = "mt-2 ml-6 inline-block align-middle text-red-700">{errMessage}</label>
-                            }
+                            <DeleteButton
+                                onClick = {handleDelete}
+                                className = "mt-3 ml-4 inline-block"
+                            />
                         </div>
+                    </td>
+                    <td>
+                        {
+                            errMessage != "" && <ErrLabel message = {errMessage} />
+                        }
                     </td>
                 </tr>
                 <tr>
                     <td className = "align-top pt-4">
-                        <p className = "mr-2 pb-4">Название</p>
-                        <input
-                            type="text"
-                            required
-                            className= {inputClassStyle + " mt-1 mb-2"}
-                            value = {name}
-                            onChange={(e)=> setName(e.target.value)}
-                        />
+                        <GroupDiv>
+                            <p className = "mr-2 pb-4">Название</p>
+                            <input
+                                type="text"
+                                required
+                                className= {inputClassStyle + " mt-1 mb-2"}
+                                value = {name}
+                                onChange={(e)=> setName(e.target.value)}
+                            />
+                        </GroupDiv>
                     </td>
-                    <td className = "align-top pt-6 pl-16">
-                        <p className = "pb-4">Сотрудники</p>
-                        <SearchInput placeholder = "Поиск по фамилии, email или телефону" />
-                        <SectionUserTable sectionId = {id} />
+                    <td className = "align-top pt-4 pl-6">
+                        <DropDown
+                            headerElements={
+                                <>
+                                    <label>Сотрудники</label>
+                                    <ArrowLongDownIcon className = "w-6" />
+                                </>
+                            }
+                            hiddenElements={
+                                <>
+                                    <SearchInput placeholder = "Поиск по фамилии, email или телефону" />
+                                    <SectionUserTable sectionId = {id} />
+                                </>
+                            }
+                        />
                     </td>
                 </tr>
             </tbody>

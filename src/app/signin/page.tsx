@@ -3,10 +3,6 @@ import SigninForm from "~/app/_components/signin/signinForm"
 
 
 export default async function Home() {
-  const divField = "flex align-middle"
-  const inputClassStyle = "input input-bordered"
-  const updateButtonStyle = "btn bg-blue-400 border-2 border-sky-700 mt-3 hover:text-gray-50 hover:bg-sky-700"
-
   return (
     <HydrateClient>
       <main>

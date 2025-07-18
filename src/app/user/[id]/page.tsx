@@ -25,10 +25,8 @@ export default function Page (props: { params: Promise<{ id?: string; }> }) {
 
 
     useEffect(() => {
-        if (!isLoading) {
-            if (!userRole) {
-                router.push('/signin')
-            }
+        if (!isLoading && userRole == "GUEST") {
+            router.push('/signin')
         }
     }, [isLoading, userRole, router])
 
@@ -58,17 +56,17 @@ export default function Page (props: { params: Promise<{ id?: string; }> }) {
             <tbody>
                 <tr>
                     <td className = {tdPageStyle}>
-                        {
-                            id != "" &&
-                            <>
-                                {
-                                    id == "new" ?
-                                    <AddUser />
-                                    :
-                                    <UserInfo id = {id} />
-                                }
-                            </>
-                        }
+                    {
+                        id != "" &&
+                        <>
+                            {
+                                id == "new" ?
+                                <AddUser />
+                                :
+                                <UserInfo id = {id} />
+                            }
+                        </>
+                    }
                     </td>
                 </tr>
             </tbody>

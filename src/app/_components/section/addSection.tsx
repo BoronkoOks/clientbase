@@ -1,20 +1,44 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useContext } from "react"
 import GroupDiv from "~/app/ui/groupDiv"
 import {PlusIcon} from "@heroicons/react/16/solid"
-import { updateButtonStyle } from "~/styles/daisystyles"
 import {checkSectionDuplicates} from "~/app/api/action/section"
 import { api } from "~/trpc/react"
+import { regularButtonStyleCtx, inputClassStyleCtx } from "~/app/ui/styles"
+import ErrLabel from "../_common/errLabel"
+import DropDown from "../_common/dropDown"
+
 
 export default function AddSection() {
     const [section, setSection] = useState<string>("")
     const [errMessage, setErrMessage] = useState<string>("")
 
-    const inputClassStyle = "input input-bordered"
+    const inputClassStyle = useContext(inputClassStyleCtx)
+    const addButtonClass = useContext(regularButtonStyleCtx)
 
     const addSectionMutation = api.section.createSection.useMutation()
     const utils = api.useUtils()
+
+
+    function Add() {
+        addSectionMutation.mutate(
+            {
+                name: section
+            },
+            {
+                onSuccess: () => {
+                    utils.section.getSectionList.invalidate()
+                    setErrMessage("")
+                    setSection("")
+                },
+                onError(error) {
+                    setErrMessage(JSON.stringify(error))
+                },
+            }
+        )
+    }
+
 
     async function handleAdd () {
         if (section.trim() == "") {
@@ -27,36 +51,22 @@ export default function AddSection() {
                 setErrMessage("Подразделение уже существует")
             }
             else {
-                addSectionMutation.mutate(
-                    {
-                        name: section
-                    },
-                    {
-                        onSuccess: () => {
-                            utils.section.getSectionList.invalidate()
-                            setErrMessage("")
-                            setSection("")
-                        },
-                        onError(error, variables, context) {
-                            setErrMessage(JSON.stringify(error))
-                        },
-                    }
-                )
+                Add()
             }
         }
     }
 
 
     return (
-        <GroupDiv>
-            <details className = "collapse" tabIndex={0}>
-                <summary className = "collapse-title">
-                    <div className = "flex -ml-2">
-                        <PlusIcon className = "w-5" />
-                        <label>Добавить</label>
-                    </div>
-                </summary>
-                <div className = "mb-2 mx-2 overscroll-x-contain">
+        <DropDown
+            headerElements = {
+                <>
+                    <PlusIcon className = "w-5" />
+                    <label>Добавить</label>
+                </>
+            }
+            hiddenElements = {
+                <>
                     <div>
                         <label>Название</label>
                         <input
@@ -68,16 +78,15 @@ export default function AddSection() {
                         />
                     </div>
                     {
-                        errMessage != "" &&
-                        <label className = "mt-2 inline-block align-middle text-red-700">{errMessage}</label>
+                        errMessage != "" && <ErrLabel message = {errMessage} className = "ml-0"/>
                     }
                     <div className = "mb-1">
-                        <button className={updateButtonStyle + " w-full"} onClick={handleAdd}>
+                        <button className={addButtonClass + " w-full"} onClick={handleAdd}>
                             Добавить
                         </button>
                     </div>
-                </div>
-            </details>
-        </GroupDiv>
+                </>
+            }
+        />
     )
 }

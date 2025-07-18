@@ -8,8 +8,7 @@ import { useRouter } from "next/navigation"
 import SearchInput from '~/app/ui/searchInput'
 import Link from "next/link"
 import { sessionCookieName } from '~/app/api/context/contextVariables'
-import { labelInlineBlockStyleCtx, tdPageStyleCtx } from "~/app/ui/styles"
-import { regularButtonStyleCtx } from '~/app/ui/styles'
+import { labelInlineBlockStyleCtx, tdPageStyleCtx, regularButtonStyleCtx } from '~/app/ui/styles'
 import {Err_403} from "~/app/_components/_common/errorMessages"
 
 
@@ -20,16 +19,14 @@ export default function Page()
 
     const buttonClass = useContext(regularButtonStyleCtx)
     const tdPageClass = useContext(tdPageStyleCtx)
+    const labelHeaderStyle = useContext(labelInlineBlockStyleCtx)
 
     const { data: userRole, isLoading } = api.user.getRole.useQuery({token: Cookies.get(cookieName) ?? ""})
 
-    const labelHeaderStyle = useContext(labelInlineBlockStyleCtx)
 
     useEffect(() => {
-        if (!isLoading) {
-            if (!userRole) {
-                router.push('/signin')
-            }
+        if (!isLoading && userRole == "GUEST") {
+            router.push('/signin')
         }
     }, [isLoading, userRole, router])
 

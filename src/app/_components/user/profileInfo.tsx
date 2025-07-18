@@ -24,7 +24,6 @@ export function ProfileInfo (
 {
     const updateButtonStyle = useContext(regularButtonStyleCtx)
     const labelHeaderStyle = useContext(labelInlineBlockStyleCtx)
-    const labelErrStyle = useContext(labelErrInlineBlockStyleCtx)
 
     const [user, setUser] = useState<User>(userdata)
     const [newPassword, setNewPassword] = useState<string>("")
@@ -58,6 +57,7 @@ export function ProfileInfo (
                     onSuccess: () => {
                         utils.user.getMyProfile.invalidate()
                         utils.user.getById.invalidate()
+                        utils.section.getUserList.invalidate()
                         setErrMessage("")
                     },
                     onError(error) {

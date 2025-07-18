@@ -1,17 +1,16 @@
 "use client"
 
-import {useState} from "react"
+import {useState, useContext} from "react"
 import { User } from "@prisma/client"
 import { api } from "~/trpc/react"
-import { updateButtonStyle } from "~/styles/daisystyles"
-import PersonalData from "../_common/personalData"
-import ContactInfo from "../_common/contactInfo"
+import PersonalData from "~/app/_components/_common/groupedFields/personalData"
+import ContactInfo from "~/app/_components/_common/groupedFields/contactInfo"
 import GroupDiv from "~/app/ui/groupDiv"
 import { useRouter } from "next/navigation"
 import {checkEmailDuplicates, checkPhoneDuplicates} from "~/app/api/action/user"
+import { inputClassStyleCtx, labelInlineBlockStyleCtx, regularButtonStyleCtx } from "~/app/ui/styles"
+import ErrLabel from "~/app/_components/_common/errLabel"
 
-
-// добавить проверку на уникальность почты и телефона
 
 export function AddUser () {
     const [user, setUser] = useState<User>({
@@ -33,13 +32,14 @@ export function AddUser () {
     const createUserMutation = api.user.createUser.useMutation()
     const utils = api.useUtils()
 
-    const inputClassStyle = "input input-bordered"
+    const inputClassStyle = useContext(inputClassStyleCtx)
+    const labelHeaderClass = useContext(labelInlineBlockStyleCtx)
+    const addButtonStyle = useContext(regularButtonStyleCtx)
 
     const router = useRouter()
 
 
     function Saving(){
-
         createUserMutation.mutate(
             {
                 surname: user.surname,
@@ -57,7 +57,7 @@ export function AddUser () {
                     setErrMessage("")
                     router.push('/user')
                 },
-                onError(error, variables, context) {
+                onError(error) {
                     setErrMessage(JSON.stringify(error))
                 },
             }
@@ -86,7 +86,6 @@ export function AddUser () {
                 else {
                     Saving()
                 }
-                
             }
         }
         else {
@@ -94,26 +93,25 @@ export function AddUser () {
         }
     }
 
+
     return (
         <table>
             <tbody>
                 <tr>
                     <td className = "pb-4" colSpan={3}>
                         <div>
-                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">Новый сотрудник</label>
-                            <button type="submit" className={updateButtonStyle + " inline-block"}
-                                onClick={() => handleSave()}>
-                                    Добавить
+                            <label className = {labelHeaderClass}>Новый сотрудник</label>
+                            <button type="submit" className={addButtonStyle + " inline-block"} onClick={() => handleSave()}>
+                                Добавить
                             </button>
                             {
-                                errMessage != "" &&
-                                <label className = "mt-3 ml-4 inline-block align-middle text-red-700">{errMessage}</label>
+                                errMessage != "" && <ErrLabel message = {errMessage} />
                             }
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td className = "align-top">
                         <PersonalData
                             surname = {user.surname}
                             name = {user.name}
@@ -125,13 +123,9 @@ export function AddUser () {
                     </td>
                     <td className = "pl-6 align-top">
                         <ContactInfo 
-                            email = {user.email}
-                            phone = {user.phone}
-                            sectionId = {user.sectionId}
+                            user = {user}
+                            setUser = {setUser}
                             edit = {true}
-                            emailChange = {val => setUser({...user, email: val})}
-                            phoneChange = {val => setUser({...user, phone: val})}
-                            sectionChange = {val => setUser({...user, sectionId: val})}
                         />
                     </td>
                     <td className = "pl-6 align-top">
@@ -146,6 +140,7 @@ export function AddUser () {
                             />
                         </GroupDiv>
                     </td>
+                    
                 </tr>
                 <tr>
                     <td className="pt-4">

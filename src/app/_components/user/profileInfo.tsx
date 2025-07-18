@@ -1,17 +1,17 @@
 "use client"
 
-import {useState} from "react"
+import {useState, useContext} from "react"
 import { User } from "@prisma/client"
 import { api } from "~/trpc/react"
-import { updateButtonStyle } from "~/styles/daisystyles"
-import PersonalData from "../_common/personalData"
-import ContactInfo from "../_common/contactInfo"
-import PasswordChange from "../_common/passwordChange"
+import PersonalData from "~/app/_components/_common/groupedFields/personalData"
+import ContactInfo from "~/app/_components/_common/groupedFields/contactInfo"
+import PasswordChange from "~/app/_components/_common/groupedFields/passwordChange"
 import {checkEditedEmailDuplicates, checkEditedPhoneDuplicates} from "~/app/api/action/user"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
+import { regularButtonStyleCtx, labelInlineBlockStyleCtx, labelErrInlineBlockStyleCtx} from "~/app/ui/styles"
+import DeleteButton from "~/app/_components/_common/deleteButton"
+import ErrLabel from "../_common/errLabel"
 
-
-// добавить проверку на уникальность почты и телефона
 
 export function ProfileInfo (
     {userdata, editSection = false, pageName = "?"} : 
@@ -22,13 +22,13 @@ export function ProfileInfo (
     }
 )
 {
-
-    const deleteButtonStyle = "btn bg-red-500 border-2 border-red-800 hover:text-gray-50 hover:bg-red-700"
+    const updateButtonStyle = useContext(regularButtonStyleCtx)
+    const labelHeaderStyle = useContext(labelInlineBlockStyleCtx)
+    const labelErrStyle = useContext(labelErrInlineBlockStyleCtx)
 
     const [user, setUser] = useState<User>(userdata)
     const [newPassword, setNewPassword] = useState<string>("")
     const [newPasswordRepeat, setNewPasswordRepeat] = useState<string>("")
-
     const [errMessage, setErrMessage] = useState<string>("")
 
     const updateUserMutation = api.user.updateUser.useMutation()
@@ -36,7 +36,8 @@ export function ProfileInfo (
     const utils = api.useUtils()
     const router = useRouter()
 
-    function Saving(){
+
+    function Save(){
         setNewPassword("")
         setNewPasswordRepeat("")
 
@@ -59,14 +60,30 @@ export function ProfileInfo (
                         utils.user.getById.invalidate()
                         setErrMessage("")
                     },
-                    onError(error, variables, context) {
+                    onError(error) {
                         setErrMessage(JSON.stringify(error))
                     },
                 }
             )
         }
+    }
 
-        
+    function Delete() {
+        deleteUserMutation.mutate(
+            {
+                id: user.id
+            },
+            {
+                onSuccess: () => {
+                    utils.user.getUserList.invalidate()
+                    setErrMessage("Сотрудник удалён")
+                    router.push("/user")
+                },
+                onError(error) {
+                    setErrMessage(JSON.stringify(error))
+                },
+            }
+        )
     }
 
 
@@ -92,11 +109,11 @@ export function ProfileInfo (
                             setErrMessage("Пароли не совпадают")
                         }
                         else {
-                            Saving()
+                            Save()
                         }
                     }
                     else {
-                        Saving()
+                        Save()
                     }
                 }
             }
@@ -106,28 +123,12 @@ export function ProfileInfo (
         }
     }
 
-
     function handleDelete () {
         if (errMessage != "Точно удалить?") {
             setErrMessage("Точно удалить?")
         }
         else {
-            deleteUserMutation.mutate(
-                {
-                    id: user.id
-                },
-                {
-                    onSuccess: () => {
-                        utils.user.getUserList.invalidate()
-                        setErrMessage("Сотрудник удалён")
-                        router.push("/user")
-                    },
-                    onError(error, variables, context) {
-                        setErrMessage(JSON.stringify(error))
-                    },
-                }
-            )
-            
+            Delete()
         }
     }
 
@@ -138,57 +139,50 @@ export function ProfileInfo (
                 <tr>
                     <td className = "pb-4" colSpan={3}>
                         <div>
-                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">
+                            <label className = {labelHeaderStyle}>
                                 {pageName}
                             </label>
                             <button type="submit" className={updateButtonStyle + " inline-block"}
-                                onClick={() => handleSave()}>
+                                onClick={handleSave}>
                                     Обновить
                             </button>
                             {
                                 pageName == "Сотрудник" &&
-                                <button type="submit" className={deleteButtonStyle + " mt-3 ml-4 inline-block"}
-                                    onClick={() => handleDelete()}
-                                    >
-                                        Удалить
-                                </button>
+                                <DeleteButton
+                                    onClick = {handleDelete}
+                                    className = "mt-3 ml-4 inline-block"
+                                />
                             }
-                            
                             {
-                                errMessage != "" &&
-                                <label className = "mt-2 ml-6 inline-block align-middle text-red-700">{errMessage}</label>
+                                errMessage != "" && <ErrLabel message = {errMessage} />
                             }
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td className = "align-top">
                         <PersonalData
                             surname = {user.surname}
                             name = {user.name}
                             fathername = {user.fathername}
-                            surnameChange={val => setUser({...user, surname: val})}
-                            nameChange={val => setUser({...user, name: val})}
-                            fathernameChange={val => setUser({...user, fathername: val})}
+                            surnameChange = {val => setUser({...user, surname: val})}
+                            nameChange = {val => setUser({...user, name: val})}
+                            fathernameChange = {val => setUser({...user, fathername: val})}
                         />
                     </td>
                     <td className = "pl-6 align-top">
                         <ContactInfo 
-                            email = {user.email}
-                            phone = {user.phone}
-                            sectionId = {user.sectionId}
+                            user = {user}
+                            setUser = {setUser}
                             edit = {editSection}
-                            emailChange = {val => setUser({...user, email: val})}
-                            phoneChange = {val => setUser({...user, phone: val})}
-                            sectionChange = {val => setUser({...user, sectionId: val})}
                         />
                     </td>
                     <td className = "pl-6 align-top">
                         <PasswordChange 
                             newPassword = {newPassword}
                             newPasswordRepeat = {newPasswordRepeat}
-                            newPasswordChange={setNewPassword}
-                            newPasswordRepeatChange={setNewPasswordRepeat}
+                            newPasswordChange = {setNewPassword}
+                            newPasswordRepeatChange = {setNewPasswordRepeat}
                         />
                     </td>
                 </tr>

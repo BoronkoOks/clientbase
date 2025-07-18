@@ -1,10 +1,15 @@
 "use client"
 
 import Link from "next/link"
+import { useContext } from "react"
+import {regularButtonStyleCtx} from "~/app/ui/styles"
+
 
 export function SigninLink() {
+  const buttonStyle = useContext(regularButtonStyleCtx)
+
   return (
-    <Link href = "/signin" className = "btn bg-blue-400 border-2 border-blue-600 mt-3 hover:text-gray-50 hover:bg-blue-600">
+    <Link href = "/signin" className = {buttonStyle}>
       Войти
     </Link>
   )

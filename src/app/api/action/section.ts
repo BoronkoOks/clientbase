@@ -38,3 +38,23 @@ export async function numberOfUsers (sectionId: string) {
 
     return result
 }
+
+export async function getSectionList() {
+    const sections = await db.section.findMany({
+        orderBy: {
+            name: "asc"
+        }
+    })
+
+    return sections
+}
+
+export async function getSectionById(id: string) {
+    const section = await db.section.findFirst({
+        where: {
+            id: id
+        }
+    })
+
+    return section
+}

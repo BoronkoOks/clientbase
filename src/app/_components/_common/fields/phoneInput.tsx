@@ -1,17 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useContext } from "react"
+import { inputClassStyleCtx } from "~/app/ui/styles"
 
 
-export default function PhoneInput ({phone, onChange, className = ""}:
-    {
-        phone: string,
-        onChange: (e:any) => void,
-        className?: string
-    }
+export default function PhoneInput (
+    {phone, onChange} : {phone: string, onChange: (e: any) => void}
 )
 {
-    const [phoneValue, setPhoneValue] = useState<string>(phone)
+    const inputClass = useContext(inputClassStyleCtx)
+
 
     function handleChange(newValue: string) {
         let value = ""
@@ -39,18 +37,16 @@ export default function PhoneInput ({phone, onChange, className = ""}:
             }
         }
 
-        setPhoneValue(value)
         onChange(value)
     }
 
 
   return (
     <input
-        value = {phoneValue}
+        value = {phone}
         onChange={e => handleChange(e.target.value)}
-        className = {className}
+        className = {inputClass + " mt-1 mb-1"}
         placeholder = "9-999-999-99-99"
     />
   )
 }
-

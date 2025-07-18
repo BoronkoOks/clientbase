@@ -3,10 +3,8 @@
 import {useEffect, useState} from "react"
 import { User } from "@prisma/client"
 import { api } from "~/trpc/react"
-import { ProfileInfo } from "../myprofile/profileInfo"
+import { ProfileInfo } from "./profileInfo"
 
-
-// добавить проверку на уникальность почты и телефона
 
 export function UserInfo ({id} : {id: string}) {
 
@@ -28,7 +26,7 @@ export function UserInfo ({id} : {id: string}) {
 
 
     if (!user) {
-        return <>Загрузка...</>
+        return <>Загрузка....</>
     }
 
 

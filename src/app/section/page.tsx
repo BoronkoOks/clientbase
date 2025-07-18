@@ -4,8 +4,8 @@ import { useEffect, useContext} from 'react'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 import { api } from "~/trpc/react"
-import SectionPage from '../_components/section/sectionPage'
-import { sessionCookieName } from '../api/context/contextVariables'
+import SectionPage from '~/app/_components/section/sectionPage'
+import { sessionCookieName } from '~/app/api/context/contextVariables'
 
 export default function Page () {
     const router = useRouter()
@@ -16,9 +16,9 @@ export default function Page () {
 
     useEffect(() => {
         if (!isLoading && !userdata) {
-            router.push('/signin');
+            router.push('/signin')
         }
-    }, [isLoading, userdata, router]);
+    }, [isLoading, userdata, router])
 
     if (isLoading) {
         return <div>Загрузка...</div>
@@ -34,6 +34,6 @@ export default function Page () {
                 </tr>
             </tbody>
         </table>
-    );
-};
+    )
+}
 

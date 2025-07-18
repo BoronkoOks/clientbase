@@ -6,11 +6,13 @@ import { SignoutButton } from "./signoutButton"
 import Cookies from 'js-cookie'
 import { api } from "~/trpc/react"
 import {sessionCookieName} from "~/app/api/context/contextVariables"
+import { tdPageStyleCtx } from "~/app/ui/styles"
 
 
 export default function HomePage () {
     const cookieName = useContext(sessionCookieName)
-    let token = Cookies.get(cookieName)
+    const token = Cookies.get(cookieName)
+    const tdPageClass = useContext(tdPageStyleCtx)
 
     const { data: userdata, isLoading } = api.user.getMyProfile.useQuery({token: token ?? ""})
 
@@ -20,7 +22,7 @@ export default function HomePage () {
     }
 
     return (
-        <div className = "pl-4 pt-4">
+        <div className = {tdPageClass}>
             {
                 (!token || !userdata) ?
                 <SigninLink />

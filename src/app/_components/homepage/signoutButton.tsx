@@ -3,12 +3,16 @@
 import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
 import { useContext, useState } from "react"
-import { sessionCookieName } from "../../api/context/contextVariables"
+import { sessionCookieName } from "~/app/api/context/contextVariables"
+import {regularButtonStyleCtx} from "~/app/ui/styles"
+import ErrLabel from "../_common/errLabel"
 
 
 export function SignoutButton() {
   const [errMessage, setErrMessage] = useState<string>("")
+
   const cookieName = useContext(sessionCookieName)
+  const buttonStyle = useContext(regularButtonStyleCtx)
 
   const endSessionMutation = api.session.endSession.useMutation()
 
@@ -33,16 +37,14 @@ export function SignoutButton() {
     )
   }
 
+  
   return (
     <>
-      <button className = "btn bg-blue-400 border-2 border-blue-600 mt-3 hover:text-gray-50 hover:bg-blue-600"
-        onClick={handleSignout}
-      >
+      <button className = {buttonStyle} onClick={handleSignout}>
         Выйти
       </button>
       {
-          errMessage != "" &&
-          <label className = "mt-2 ml-6 inline-block align-middle text-red-700">{errMessage}</label>
+        errMessage != "" && <ErrLabel message = {errMessage} />
       }
     </>
   )

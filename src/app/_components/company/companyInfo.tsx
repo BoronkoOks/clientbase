@@ -1,6 +1,6 @@
 import { Company } from "@prisma/client"
 import TINField from "./tinField"
-import EmailInput from "../_common/emailInput"
+import EmailInput from "../_common/fields/emailInput"
 
 export default function CompanyInfo (
     {company, companyChange} :

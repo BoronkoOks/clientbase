@@ -1,6 +1,6 @@
 import { Contact } from "@prisma/client"
-import PhoneInput from "../_common/phoneInput"
-import PersonalData from "../_common/personalData"
+import PhoneInput from "../_common/fields/phoneInput"
+import PersonalData from "../_common/groupedFields/personalData"
 import GroupDiv from "~/app/ui/groupDiv"
 import { useContext } from "react"
 import { inputClassStyleCtx } from "~/app/ui/styles"

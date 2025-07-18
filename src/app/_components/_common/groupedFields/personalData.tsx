@@ -1,4 +1,7 @@
+import { inputClassStyleCtx} from "~/app/ui/styles"
+import { useContext } from "react"
 import GroupDiv from "~/app/ui/groupDiv"
+
 
 export default function PersonalData (
     {surname, name, fathername, surnameChange, nameChange, fathernameChange} :
@@ -11,21 +14,20 @@ export default function PersonalData (
         fathernameChange: (val: string) => void
     }
 ) {
-    
-    const inputClassStyle = "input input-bordered"
-    const divBox = "border-blue-300 border-2 py-2 px-4 rounded-lg"
+    const inputClass = useContext(inputClassStyleCtx)
 
     return (
-        <div className = {divBox}>
+        <GroupDiv>
             <p className="mb-4"><b>Личные данные*</b></p>
             <div>
                 <label>Фамилия</label>
                 <input
                     type="text"
                     required
-                    className= {inputClassStyle + " mt-1 mb-2"}
+                    className= {inputClass + " mt-1 mb-2"}
                     value = {surname}
-                    onChange={(e)=> surnameChange(e.target.value)}
+                    onChange={e => surnameChange(e.target.value)}
+                    maxLength={100}
                 />
             </div>
             <div>
@@ -33,9 +35,10 @@ export default function PersonalData (
                 <input
                     type="text"
                     required
-                    className= {inputClassStyle + " mt-1 mb-2"}
+                    className= {inputClass + " mt-1 mb-2"}
                     value = {name}
-                    onChange={(e)=> nameChange(e.target.value)}
+                    onChange={e => nameChange(e.target.value)}
+                    maxLength={100}
                 />
             </div>
             <div className = "mt-2">
@@ -43,11 +46,12 @@ export default function PersonalData (
                 <input
                     type="text"
                     required
-                    className= {inputClassStyle + " mt-1 mb-2"}
+                    className= {inputClass + " mt-1 mb-2"}
                     value = {fathername}
-                    onChange={(e)=> fathernameChange(e.target.value)}
+                    onChange={e => fathernameChange(e.target.value)}
+                    maxLength={100}
                 />
             </div>
-        </div>
+        </GroupDiv>
     )
 }

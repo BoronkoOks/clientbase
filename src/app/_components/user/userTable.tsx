@@ -1,11 +1,12 @@
 "use client"
 
-import React, { useEffect } from "react"
+import React, { useContext, useEffect } from "react"
 import { PencilSquareIcon } from "@heroicons/react/24/outline"
 import Link from "next/link"
 import { api } from "~/trpc/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import Pagination from "~/app/ui/pagination"
+import {tdStyleCtx, tableStyleCtx} from "~/app/ui/styles"
 
 
 export default function UserTable()
@@ -16,12 +17,14 @@ export default function UserTable()
   const pathname = usePathname()
   const { replace } = useRouter()
   
-  const startNumber = (page - 1) * 10 + 1
+  const size = 10
+  const startNumber = (page - 1) * size + 1
 
-  const tdStyle = "px-2 border border-black border-solid"
+  const tdStyle = useContext(tdStyleCtx)
+  const tableClass = useContext(tableStyleCtx)
 
   const {data: usersData, isLoading} = api.user.getUserList.useQuery({
-    query: query, page: page, size: 10})
+    query: query, page: page, size: size})
 
   const totalPages = usersData ? (usersData.pages > 0 ? usersData.pages : 1) : 1
 
@@ -44,7 +47,7 @@ export default function UserTable()
 
   return (
     <div>
-      <table className = "box-border my-4 border-collapse border-1 border-black">
+      <table className = {tableClass}>
         <thead>
           <tr>
             <th className={tdStyle}>№</th>
@@ -67,7 +70,7 @@ export default function UserTable()
               <td className={tdStyle}>{u.phone}</td>
               <td className={tdStyle + " border-none"}>
                 <Link href={`/user/${u.id}`}>
-                    <PencilSquareIcon className="w-4" />
+                  <PencilSquareIcon className="w-4" />
                 </Link>
               </td>
             </tr>

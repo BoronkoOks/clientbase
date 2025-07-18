@@ -1,5 +1,5 @@
 import { HydrateClient } from "~/trpc/server"
-import SigninForm from "../_components/signin/signinForm"
+import SigninForm from "~/app/_components/signin/signinForm"
 
 
 export default async function Home() {

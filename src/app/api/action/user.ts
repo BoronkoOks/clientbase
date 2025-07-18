@@ -53,3 +53,28 @@ export async function checkEditedPhoneDuplicates (phone: string, id: string) {
     return result
 }
 
+
+export async function getUserId (token: string) {
+    const session = await db.session.findFirst({
+        where: {
+            sessionToken: token
+        }
+    })
+
+    return session?.userId ?? ""
+}
+
+
+export async function getUserRole (token: string) {
+    const session = await db.session.findFirst({
+        where: {
+            sessionToken: token
+        },
+        include: {
+            user: true
+        }
+    })
+
+    return session?.user.role.toString() ?? ""
+}
+

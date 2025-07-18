@@ -1,9 +1,11 @@
+import { useContext } from "react"
+import { inputClassStyleCtx } from "~/app/ui/styles"
+
 export default function EmailInput (
     {email, onChange} : {email: string, onChange: (val: string) => void}
 )
 {
-    const inputClassStyle = "input input-bordered"
-
+    const inputClassStyle = useContext(inputClassStyleCtx)
 
     const forbiddenSym = new Set([" ", "!", "\"", "#", "№", "$", ";", "%", ":", "'",
                                     "^", "&", "?", "*", "(", ")", "=", "`", "~", "\\",
@@ -15,11 +17,11 @@ export default function EmailInput (
         for (let i = 0; i < newValue.length; i++) {
             let currSym = newValue[i] ?? ""
 
-            if (newValue[i] == "@" && value.includes("@")) { // проверить запрещённые символы
+            if (newValue[i] == "@" && value.includes("@")) { // убедиться, что @ в адресе будет только одна
                 continue
             }
             else {
-                if (!forbiddenSym.has(currSym)) { // убедиться, что @ в адресе будет только одна
+                if (!forbiddenSym.has(currSym)) { // проверить запрещённые символы
                     value += newValue[i]
                 }
             }
@@ -28,8 +30,9 @@ export default function EmailInput (
         onChange(value)
     }
 
+    
     return (
-        <>
+        <div>
             <label>Email</label>
             <input
                 type="text"
@@ -38,6 +41,6 @@ export default function EmailInput (
                 value = {email}
                 onChange={(e)=> handleChange(e.target.value)}
             />
-        </>
+        </div>
     )
 }

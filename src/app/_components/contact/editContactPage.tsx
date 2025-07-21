@@ -3,12 +3,15 @@
 import { useEffect, useContext, useState} from 'react'
 import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
-import { sessionCookieName } from '../../api/context/contextVariables'
-import { updateButtonStyle } from '~/styles/daisystyles'
+import { sessionCookieName } from '~/app/api/context/contextVariables'
 import { Contact } from '@prisma/client'
 import { useRouter, useSearchParams, useParams } from "next/navigation"
 import {checkEditedPhoneDuplicates, loadContactData} from "~/app/api/action/contact"
 import ContactForm from './contactForm'
+import { Err_403, Err_404 } from '~/app/_components/_common/errorMessages'
+import { regularButtonStyleCtx, labelInlineBlockStyleCtx } from '~/app/ui/styles'
+import ErrLabel from '~/app/_components/_common/errLabel'
+
 
 export default function EditContactPage (
     { companyname } : { companyname: string}
@@ -38,6 +41,9 @@ export default function EditContactPage (
     const updateContactMutation = api.contact.updateContact.useMutation()
     const utils = api.useUtils()
 
+    const updateButtonClass = useContext(regularButtonStyleCtx)
+    const labelHeaderClass = useContext(labelInlineBlockStyleCtx)
+
 
     useEffect(() => {
         async function LoadContactData() {
@@ -54,10 +60,11 @@ export default function EditContactPage (
         LoadContactData()
     }, [])
 
+
     useEffect(() => {
         if (!isLoading) {
             if (!userData) {
-                router.push('/')
+                router.push('/signin')
             }
         }
     }, [isLoading, userData, router])
@@ -77,7 +84,6 @@ export default function EditContactPage (
                 onSuccess: () => {
                     setErrMessage("")
                     utils.company.getContactList.invalidate()
-                    router.push("/company/"+companyId)
                 },
                 onError: (error) => {
                     setErrMessage(JSON.stringify(error))
@@ -108,12 +114,8 @@ export default function EditContactPage (
     }
 
 
-    if (companyname == "") {
-        return <div>Клиент не найден</div>
-    }
-
     if (errMessage == "Контакт не найден") {
-        return <div>Контакт не найден</div>
+        return <Err_404 message = "Контакт не найден" />
     }
 
     if (isLoading) {
@@ -121,7 +123,7 @@ export default function EditContactPage (
     }
 
     if (userData != "ADMIN") {
-        return <div>403 Forbidden</div>
+        return <Err_403 />
     }
 
     
@@ -131,14 +133,13 @@ export default function EditContactPage (
                 <tr>
                     <td className = "pb-4">
                         <div>
-                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">Редактирование контакта для "{companyname}"</label>
-                            <button type="submit" className={updateButtonStyle + " inline-block"}
+                            <label className = {labelHeaderClass}>Редактирование контакта для "{companyname}"</label>
+                            <button type="submit" className={updateButtonClass + " inline-block"}
                                 onClick={() => handleSave()}>
                                     Сохранить
                             </button>
                             {
-                                errMessage != "" &&
-                                <label className = "mt-3 ml-4 inline-block align-middle text-red-700">{errMessage}</label>
+                                errMessage != "" && <ErrLabel message = {errMessage} className = "ml-4" />
                             }
                         </div>
                     </td>

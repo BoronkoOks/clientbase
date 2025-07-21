@@ -45,3 +45,17 @@ export async function loadContactData (id: string) {
 }
 
 
+export async function getCompanynameByContact (id: string) {
+    const contact = await db.contact.findFirst({
+        where: {
+            id: id
+        },
+        include: {
+            company: true
+        }
+    })
+
+    return contact?.company.companyname
+}
+
+

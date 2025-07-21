@@ -17,7 +17,7 @@ export default function PersonalData (
     const inputClass = useContext(inputClassStyleCtx)
 
     return (
-        <GroupDiv>
+        <GroupDiv className = "w-max">
             <p className="mb-4"><b>Личные данные*</b></p>
             <div>
                 <label>Фамилия</label>

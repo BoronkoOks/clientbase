@@ -3,12 +3,15 @@
 import { useEffect, useContext, useState} from 'react'
 import { api } from "~/trpc/react"
 import Cookies from 'js-cookie'
-import { sessionCookieName } from '../../api/context/contextVariables'
-import { updateButtonStyle } from '~/styles/daisystyles'
+import { sessionCookieName } from '~/app/api/context/contextVariables'
 import { Contact } from '@prisma/client'
 import { useRouter, useSearchParams } from "next/navigation"
 import {checkPhoneDuplicates} from "~/app/api/action/contact"
 import ContactForm from './contactForm'
+import { regularButtonStyleCtx, labelInlineBlockStyleCtx } from '~/app/ui/styles'
+import { Err_403 } from '~/app/_components/_common/errorMessages'
+import ErrLabel from '~/app/_components/_common/errLabel'
+
 
 export default function NewContactPage (
 { companyname } : {companyname: string}
@@ -27,23 +30,27 @@ export default function NewContactPage (
     })
 
     const [errMessage, setErrMessage] = useState<string>("")
+
     const router = useRouter()
 
     const cookieName = useContext(sessionCookieName)
 
-    const { data: userData, isLoading } = api.user.getRole.useQuery({token: Cookies.get(cookieName) ?? ""})
+    const { data: userRole, isLoading } = api.user.getRole.useQuery({token: Cookies.get(cookieName) ?? ""})
 
     const createContactMutation = api.contact.createContact.useMutation()
     const utils = api.useUtils()
 
+    const updateButtonClass = useContext(regularButtonStyleCtx)
+    const labedHeaderClass = useContext(labelInlineBlockStyleCtx)
+
 
     useEffect(() => {
         if (!isLoading) {
-            if (!userData) {
-                router.push('/')
+            if (!userRole) {
+                router.push('/signin')
             }
         }
-    }, [isLoading, userData, router])
+    }, [isLoading, userRole, router])
 
 
     function Add() {
@@ -69,7 +76,6 @@ export default function NewContactPage (
     }
 
 
-
     async function handleAdd () {
         if (contact.surname.trim() == "" || contact.name.trim() == "" || contact.fathername.trim() == ""
             || contact.phone.length < 15)
@@ -88,37 +94,29 @@ export default function NewContactPage (
         }
     }
 
-
-    if (companyname == "") {
-        return <div>Клиент не найден</div>
-    }
-
     
     if (isLoading) {
         return <div>загрузка...</div>
     }
 
-    if (userData != "ADMIN") {
-        return <div>403 Forbidden</div>
+    if (userRole != "ADMIN") {
+        return <Err_403 />
     }
 
     
-
-
     return (
         <table>
             <tbody>
                 <tr>
                     <td className = "pb-4">
                         <div>
-                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">Новый контакт для "{companyname}"</label>
-                            <button type="submit" className={updateButtonStyle + " inline-block"}
+                            <label className = {labedHeaderClass}>Новый контакт для "{companyname}"</label>
+                            <button type="submit" className = {updateButtonClass + " inline-block"}
                                 onClick={() => handleAdd()}>
                                     Добавить
                             </button>
                             {
-                                errMessage != "" &&
-                                <label className = "mt-3 ml-4 inline-block align-middle text-red-700">{errMessage}</label>
+                                errMessage != "" && <ErrLabel message = {errMessage} className = "ml-4" />
                             }
                         </div>
                     </td>

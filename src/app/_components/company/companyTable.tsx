@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useEffect } from "react"
+import { useEffect, useContext } from "react"
 import { PencilSquareIcon } from "@heroicons/react/24/outline"
 import Link from "next/link"
 import { api } from "~/trpc/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import Pagination from "~/app/ui/pagination"
-import { Company } from "@prisma/client"
+import { tdStyleCtx, tableStyleCtx } from "~/app/ui/styles" 
 
 
 export default function CompanyTable({edit = false} : {edit: boolean})
@@ -20,7 +20,8 @@ export default function CompanyTable({edit = false} : {edit: boolean})
   const size = 10
   const startNumber = (page - 1) * size + 1
 
-  const tdStyle = "px-2 border border-black border-solid"
+  const tdStyle = useContext(tdStyleCtx)
+  const tableClass = useContext(tableStyleCtx)
 
   const {data: companiesData, isLoading} = api.company.getCompanyList.useQuery({
     query: query, page: page, size: size})
@@ -46,7 +47,7 @@ export default function CompanyTable({edit = false} : {edit: boolean})
 
   return (
     <div>
-      <table className = "box-border my-4 border-collapse border-1 border-black">
+      <table className = {tableClass}>
         <thead>
           <tr>
             <th className={tdStyle}>№</th>

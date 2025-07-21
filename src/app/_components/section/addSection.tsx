@@ -78,7 +78,7 @@ export default function AddSection() {
                         />
                     </div>
                     {
-                        errMessage != "" && <ErrLabel message = {errMessage} className = "ml-0"/>
+                        errMessage != "" && <ErrLabel message = {errMessage}/>
                     }
                     <div className = "mb-1">
                         <button className={addButtonClass + " w-full"} onClick={handleAdd}>

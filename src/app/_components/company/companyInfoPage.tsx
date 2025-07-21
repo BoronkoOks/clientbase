@@ -2,124 +2,137 @@
 
 import { useEffect, useState, useContext} from 'react'
 import { api } from "~/trpc/react"
-import Cookies from 'js-cookie'
 import { useRouter } from "next/navigation"
-import { sessionCookieName } from '../../api/context/contextVariables'
 import SearchInput from '~/app/ui/searchInput'
-import { deleteButtonStyle, updateButtonStyle } from '~/styles/daisystyles'
 import CompanyInfo from './companyInfo'
-import { Company, Contact } from '@prisma/client'
+import { Company } from '@prisma/client'
 import GroupDiv from '~/app/ui/groupDiv'
-import { checkEditedEmailDuplicates, checkEditedTINDuplicates } from '~/app/api/action/company'
+import { checkEditedEmailDuplicates, checkEditedTINDuplicates, getCompanyById } from '~/app/api/action/company'
 import ContactsTable from './contactsRelated/contactsTable'
 import Link from 'next/link'
 import { ArrowLongDownIcon } from '@heroicons/react/24/outline'
+import { Err_404 } from '~/app/_components/_common/errorMessages'
+import { regularButtonStyleCtx, labelInlineBlockStyleCtx } from '~/app/ui/styles'
+import DeleteButton from '~/app/_components/_common/deleteButton'
+import ErrLabel from '~/app/_components/_common/errLabel'
+import DropDown from '~/app/_components/_common/dropDown'
+
 
 export default function CompanyInfoPage (
-    {companyInf} : {companyInf: Company}
+    {id, edit = false} : {id: string, edit: boolean}
 )
 {
-    const router = useRouter()
-
-    const cookieName = useContext(sessionCookieName)
-    const token = Cookies.get(cookieName)
-
-    const [company, setCompany] = useState<Company>(companyInf)
+    const [company, setCompany] = useState<Company|undefined>()
     const [errMessage, setErrMessage] = useState<string>("")
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+
+    const router = useRouter()
 
     const updateCompanyMutation = api.company.updateCompany.useMutation()
     const deleteCompanyMutation = api.company.deleteCompany.useMutation()
     const utils = api.useUtils()
 
-    const { data: userData, isLoading } = api.user.getRole.useQuery({token: token ?? ""})
+    const updateButtonClass = useContext(regularButtonStyleCtx)
+    const labelHeaderClass = useContext(labelInlineBlockStyleCtx)
 
 
     useEffect(() => {
-        if (!isLoading) {
-            if (!userData || !token) {
-                router.push('/signin')
+        async function LoadCompanyInfo() {
+            const companyInfo = await getCompanyById(id)
+
+            if (companyInfo) {
+                setCompany(companyInfo)
             }
+
+            setIsLoading(false)
         }
-    }, [isLoading, userData, router])
+
+        LoadCompanyInfo()
+    }, [])
 
 
     function Save() {
-        updateCompanyMutation.mutate(
-            {
-                id: company.id,
-                companyname: company.companyname,
-                TIN: company.TIN,
-                email: company.email
-            },
-            {
-                onSuccess: (data) => {
-                    if (data.resultMessage == "Успешно") {
-                        utils.company.getCompanyList.invalidate()
-                        setErrMessage("")
-                    }
-                    else {
-                        setErrMessage(data.resultMessage)
-                    }
+        if (company) {
+            updateCompanyMutation.mutate(
+                {
+                    id: company.id,
+                    companyname: company.companyname,
+                    TIN: company.TIN,
+                    email: company.email
                 },
-                onError: (error) => {
-                    setErrMessage(JSON.stringify(error))
+                {
+                    onSuccess: (data) => {
+                        if (data.resultMessage == "Успешно") {
+                            utils.company.getCompanyList.invalidate()
+                            setErrMessage("")
+                        }
+                        else {
+                            setErrMessage(data.resultMessage)
+                        }
+                    },
+                    onError: (error) => {
+                        setErrMessage(JSON.stringify(error))
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     function Delete() {
-        deleteCompanyMutation.mutate(
-            {
-                id: company.id
-            },
-            {
-                onSuccess: (data) => {
-                    if (data.resultMessage == "Успешно") {
-                        setErrMessage("Клиент удалён")
-                        utils.company.getCompanyList.invalidate()
-                        router.push('/company')
-                    }
-                    else {
-                        setErrMessage(data.resultMessage)
-                    }
+        if (company) {
+            deleteCompanyMutation.mutate(
+                {
+                    id: company.id
                 },
-                onError: (error) => {
-                    setErrMessage(JSON.stringify(error))
+                {
+                    onSuccess: (data) => {
+                        if (data.resultMessage == "Успешно") {
+                            setErrMessage("Клиент удалён")
+                            utils.company.getCompanyList.invalidate()
+                            router.push('/company')
+                        }
+                        else {
+                            setErrMessage(data.resultMessage)
+                        }
+                    },
+                    onError: (error) => {
+                        setErrMessage(JSON.stringify(error))
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
 
     async function handleSave () {
-        if (company.companyname.trim() == "" || company.TIN.length == 0 || company.email.length == 0) {
-            setErrMessage("Необходимо заполнить все поля")
-        }
-        else {
-            if (company.TIN.length < 12) {
-                setErrMessage("ИНН должен состоять из 12 цифр")
+        if (company) {
+            if (company.companyname.trim() == "" || company.TIN.length == 0 || company.email.length == 0) {
+                setErrMessage("Необходимо заполнить все поля")
             }
             else {
-                const TINduplicates= await checkEditedTINDuplicates(company.TIN, company.id)
-
-                if (TINduplicates) {
-                    setErrMessage("ИНН клиентов не должны повторяться")
+                if (company.TIN.length < 12) {
+                    setErrMessage("ИНН должен состоять из 12 цифр")
                 }
                 else {
-                    const emailDuplicates = await checkEditedEmailDuplicates(company.email, company.id)
+                    const TINduplicates= await checkEditedTINDuplicates(company.TIN, company.id)
 
-                    if (emailDuplicates) {
-                        setErrMessage("email клиентов не должны повторяться")
+                    if (TINduplicates) {
+                        setErrMessage("ИНН клиентов не должны повторяться")
                     }
                     else {
-                        Save()
+                        const emailDuplicates = await checkEditedEmailDuplicates(company.email, company.id)
+
+                        if (emailDuplicates) {
+                            setErrMessage("email клиентов не должны повторяться")
+                        }
+                        else {
+                            Save()
+                        }
                     }
                 }
             }
         }
     }
-
 
     async function handleDelete () {
         if (errMessage != "Точно удалить?") {
@@ -134,9 +147,9 @@ export default function CompanyInfoPage (
     if (isLoading) {
         return <div>загрузка...</div>
     }
-    
-    if (userData != "ADMIN" && userData != "SOTR") {
-        return <div>403 Forbidden</div>
+
+    if (!company) {
+        return <Err_404 message = "Клиент не найден" />
     }
 
 
@@ -146,57 +159,62 @@ export default function CompanyInfoPage (
                 <tr>
                     <td className = "align-top" colSpan={2}>
                         <div>
-                            <label className = "mt-2 mr-4 font-bold inline-block align-middle">
+                            <label className = {labelHeaderClass}>
                                 Компания
                             </label>
-                            <button type="submit" className={updateButtonStyle + " inline-block"}
-                                onClick={() => handleSave()}>
-                                    Обновить
-                            </button>
-                            <button type="submit" className={deleteButtonStyle + " mt-3 ml-4 inline-block"}
-                                onClick={() => handleDelete()}>
-                                    Удалить
-                            </button>
                             {
-                                errMessage != "" &&
-                                <label className = "mt-2 ml-6 inline-block align-middle text-red-700">{errMessage}</label>
+                                edit &&
+                                <>
+                                    <button type="submit" className={updateButtonClass + " inline-block"}
+                                        onClick={() => handleSave()}>
+                                            Обновить
+                                    </button>
+                                    <DeleteButton
+                                        onClick = {handleDelete}
+                                        className = "mt-3 ml-4 inline-block"
+                                    />
+                                    {
+                                        errMessage != "" && <ErrLabel message = {errMessage} className = "ml-6" />
+                                    }
+                                </>
                             }
                         </div>
                     </td>
                     <td className = "align-top pl-14" rowSpan={2}>
-                        <GroupDiv>
-                                    <details className = "collapse" tabIndex={0}>
-                                        <summary className = "collapse-title">
-                                            <div className = "flex">
-                                                <p>Контакты</p>
-                                                <ArrowLongDownIcon className = "w-6" />
-                                            </div>
-                                        </summary>
-                                        <div className = "mb-4 mx-4">
-                        <div className = "mb-4">
-                            {/* <label className = "mt-2 mr-4 inline-block align-middle">Контакты</label> */}
-                            <Link href = {"/contact/new?company="+company.id}
-                                className = "btn bg-blue-400 border-2 border-blue-600 mt-3 hover:text-gray-50 hover:bg-blue-600">
-                                    {"Добавить контактное лицо ->"}
-                            </Link>
-                        </div>
-                        <SearchInput placeholder = "Поиск по фамилии или телефону" />
-                        <ContactsTable companyId = {company.id} edit = {userData == "ADMIN"} />
-                        </div>
-            </details> 
-        </GroupDiv>
+                        <DropDown
+                            headerElements = {
+                                <>
+                                    <p>Контакты</p>
+                                    <ArrowLongDownIcon className = "w-6" />
+                                </>
+                            }
+                            hiddenElements = {
+                                <>
+                                {
+                                    edit &&
+                                    <div className = "mb-4">
+                                        <Link href = {"/contact/new?company="+company.id}
+                                            className = {updateButtonClass}>
+                                                {"Добавить контактное лицо ->"}
+                                        </Link>
+                                    </div>
+                                }
+                                    <SearchInput placeholder = "Поиск по фамилии или телефону" />
+                                    <ContactsTable companyId = {company.id} edit = {edit} />
+                                </>
+                            }
+                        />
                     </td>
                 </tr>
                 <tr>
                     <td className = "align-top pt-4">
-                        <GroupDiv>
+                        <GroupDiv className = "w-max">
                             <CompanyInfo
                                 company = {company}
                                 companyChange = {setCompany}
                             />
                         </GroupDiv>
                     </td>
-                    
                 </tr>
             </tbody>
         </table>

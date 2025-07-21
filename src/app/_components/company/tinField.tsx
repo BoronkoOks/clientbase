@@ -1,8 +1,15 @@
+"use client"
+
+import { useContext } from "react"
+import { inputClassStyleCtx } from "~/app/ui/styles"
+
+
 export default function TINField (
     {tin, onChange} : {tin: string, onChange: (val: string) => void}
 )
 {
-    const inputClassStyle = "input input-bordered"
+    const inputClassStyle = useContext(inputClassStyleCtx)
+
 
     function handleChange (newValue: string) {
         let value = ""
@@ -20,6 +27,7 @@ export default function TINField (
         onChange(value)
     }
 
+    
     return (
         <>
             <label>ИНН</label>

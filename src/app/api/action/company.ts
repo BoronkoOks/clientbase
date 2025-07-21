@@ -85,3 +85,14 @@ export async function getCompanyList (query: string = "") {
 
     return companies
 }
+
+
+export async function getCompanyById (id: string) {
+    const company = await db.company.findFirst({
+        where: {
+            id: id
+        }
+    })
+
+    return company
+}

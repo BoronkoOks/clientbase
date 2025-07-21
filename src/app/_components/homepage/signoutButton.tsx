@@ -44,7 +44,7 @@ export function SignoutButton() {
         Выйти
       </button>
       {
-        errMessage != "" && <ErrLabel message = {errMessage} />
+        errMessage != "" && <ErrLabel message = {errMessage} className="ml-4" />
       }
     </>
   )

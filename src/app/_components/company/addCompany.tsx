@@ -1,13 +1,15 @@
 "use client"
 
-import { useState } from "react"
-import GroupDiv from "~/app/ui/groupDiv"
+import { useState, useContext } from "react"
 import {PlusIcon} from "@heroicons/react/16/solid"
-import { updateButtonStyle } from "~/styles/daisystyles"
 import { api } from "~/trpc/react"
 import { Company } from "@prisma/client"
 import { checkTINDuplicates, checkEmailuplicates } from "~/app/api/action/company"
 import CompanyInfo from "./companyInfo"
+import { regularButtonStyleCtx } from "~/app/ui/styles"
+import DropDown from "~/app/_components/_common/dropDown"
+import ErrLabel from "~/app/_components/_common/errLabel"
+
 
 export default function AddCompany() {
     const [company, setCompany] = useState<Company>({
@@ -19,7 +21,7 @@ export default function AddCompany() {
 
     const [errMessage, setErrMessage] = useState<string>("")
 
-    const inputClassStyle = "input input-bordered"
+    const addButtonClass = useContext(regularButtonStyleCtx)
 
     const addCompanyMutation = api.company.createCompany.useMutation()
     const utils = api.useUtils()
@@ -84,33 +86,32 @@ export default function AddCompany() {
 
 
     return (
-        <GroupDiv>
-            <details className = "collapse" tabIndex={0}>
-                <summary className = "collapse-title">
-                    <div className = "flex -ml-2">
-                        <PlusIcon className = "w-5" />
-                        <label>Добавить</label>
-                    </div>
-                </summary>
-                <div className = "mb-2 mx-2 overscroll-x-contain">
+        <DropDown
+            headerElements={
+                <>
+                    <PlusIcon className = "w-5" />
+                    <label>Добавить</label>
+                </>
+            }
+            hiddenElements={
+                <>
                     <CompanyInfo
                         company = {company}
                         companyChange = {setCompany}
                     />
                     {
-                        errMessage != "" &&
-                        <label className = "mt-2 inline-block align-middle text-red-700">{errMessage}</label>
+                        errMessage != "" && <ErrLabel message = {errMessage} />
                     }
                     {
                         company.id == "" &&
                         <div className = "mb-1">
-                            <button className={updateButtonStyle + " w-full"} onClick={handleAdd}>
+                            <button className={addButtonClass + " w-full"} onClick={handleAdd}>
                                 Добавить
                             </button>
                         </div>
                     }
-                </div>
-            </details>
-        </GroupDiv>
+                </>
+            }
+        />
     )
 }

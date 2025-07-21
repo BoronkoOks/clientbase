@@ -105,7 +105,7 @@ export function AddUser () {
                                 Добавить
                             </button>
                             {
-                                errMessage != "" && <ErrLabel message = {errMessage} />
+                                errMessage != "" && <ErrLabel message = {errMessage} className="ml-4" />
                             }
                         </div>
                     </td>

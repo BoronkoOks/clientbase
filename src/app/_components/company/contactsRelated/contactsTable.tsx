@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { PencilSquareIcon, MinusIcon } from "@heroicons/react/24/outline"
 import Link from "next/link"
 import { api } from "~/trpc/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import Pagination from "~/app/ui/pagination"
 import { Contact } from "@prisma/client"
+import { tdStyleCtx, tableStyleCtx } from "~/app/ui/styles"
 
 
 export default function ContactsTable(
@@ -14,7 +15,7 @@ export default function ContactsTable(
 )
 {
   const searchParams = useSearchParams()
-  const query = searchParams.get("query") || "";
+  const query = searchParams.get("query") || ""
   const page = Number(searchParams.get("page")) || 1
   const pathname = usePathname()
   const { replace } = useRouter()
@@ -26,10 +27,10 @@ export default function ContactsTable(
   const utils = api.useUtils()
 
   const size = 8
-  
   const startNumber = (page - 1) * size + 1
 
-  const tdStyle = "px-2 border border-black border-solid"
+  const tdStyle = useContext(tdStyleCtx)
+  const tableStyle = useContext(tableStyleCtx)
 
   const {data: contactsData, isLoading} = api.company.getContactList.useQuery({
     companyId: companyId, query: query, page: page, size: size})
@@ -65,7 +66,6 @@ export default function ContactsTable(
     )
   }
 
-
   
   function handleDelete (id: string) {
     if (id != confirmDelete) {
@@ -84,7 +84,7 @@ export default function ContactsTable(
 
   return (
     <div>
-      <table className = "box-border my-4 border-collapse border-1 border-black">
+      <table className = {tableStyle}>
         <thead>
           <tr>
             <th className={tdStyle}>№</th>
